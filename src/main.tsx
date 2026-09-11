@@ -294,6 +294,7 @@ function App() {
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [help, setHelp] = useState(false);
+  const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
   useEffect(() => {
     if (!help && !inspectorOpen) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -316,12 +317,15 @@ function App() {
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedEdge, setSelectedEdge] = useState<string | null>(null);
   const [picker, setPicker] = useState<{ x: number; y: number } | null>(null);
-  const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; start: { x: number; y: number } } | null>(null);
+  const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; start: { x: number; y: number }; moved: boolean } | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [storageNotice, setStorageNotice] = useState(restored.restoredLegacy);
   const mapRef = useRef(map);
   const lastEditAt = useRef(Date.now());
   const previousEditCount = useRef(map.meta?.edit_count || 0);
+  const focusEditingRef = useRef(false);
+  const focusBeforeRef = useRef("");
+  const focusDraftRef = useRef(restored.map.focus_question || "");
   const svgRef = useRef<SVGSVGElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -377,15 +381,19 @@ function App() {
   }, [map.concepts]);
 
   useEffect(() => {
-    mapRef.current = map;
-    editableRef.current = { map, conceptBank, relationBank };
-    historyRef.current = history;
-    localStorage.setItem(MANUAL_MAP_STORAGE, JSON.stringify(map));
-    localStorage.setItem(MANUAL_CONCEPT_BANK_STORAGE, JSON.stringify(conceptBank));
-    localStorage.setItem(MANUAL_RELATION_BANK_STORAGE, JSON.stringify(relationBank));
-    localStorage.setItem(MANUAL_HISTORY_STORAGE, JSON.stringify(history));
-    if ((map.meta?.edit_count || 0) !== previousEditCount.current) {
-      previousEditCount.current = map.meta?.edit_count || 0;
+    // Mutations update the refs before scheduling React state. Read from the refs
+    // here so an older render cannot overwrite a newer timer or pointer update.
+    const current = editableRef.current;
+    localStorage.setItem(MANUAL_MAP_STORAGE, JSON.stringify(current.map));
+    localStorage.setItem(MANUAL_CONCEPT_BANK_STORAGE, JSON.stringify(current.conceptBank));
+    localStorage.setItem(MANUAL_RELATION_BANK_STORAGE, JSON.stringify(current.relationBank));
+    localStorage.setItem(MANUAL_HISTORY_STORAGE, JSON.stringify(historyRef.current));
+    if (!focusEditingRef.current) {
+      focusDraftRef.current = current.map.focus_question || "";
+      setFocusDraft(focusDraftRef.current);
+    }
+    if ((current.map.meta?.edit_count || 0) !== previousEditCount.current) {
+      previousEditCount.current = current.map.meta?.edit_count || 0;
       lastEditAt.current = Date.now();
     }
   }, [map, conceptBank, relationBank, history]);
@@ -481,18 +489,21 @@ function App() {
       status: "asserted",
       derived_from: null,
     };
-    const added = commitEdit(`Connected concepts with "${relation.label}"`, current => ({
-      ...current,
-      map: {
-        ...current.map,
-        propositions: [...current.map.propositions, proposition],
-        meta: {
-          ...current.map.meta,
-          edit_count: (current.map.meta?.edit_count || 0) + 1,
-          added_by: { ...current.map.meta.added_by, drawn: (current.map.meta?.added_by?.drawn || 0) + 1 },
+    const added = commitEdit(
+      `Connected "${conceptLabel(subject, editableRef.current.map)}" to "${conceptLabel(object, editableRef.current.map)}" with relation "${relation.label}"`,
+      current => ({
+        ...current,
+        map: {
+          ...current.map,
+          propositions: [...current.map.propositions, proposition],
+          meta: {
+            ...current.map.meta,
+            edit_count: (current.map.meta?.edit_count || 0) + 1,
+            added_by: { ...current.map.meta.added_by, drawn: (current.map.meta?.added_by?.drawn || 0) + 1 },
+          },
         },
-      },
-    }));
+      }),
+    );
     if (added) {
       setSelected([]);
       setSelectedEdge(null);
@@ -505,9 +516,14 @@ function App() {
     const conceptIds = [...selected];
     const propositionId = selectedEdge;
     const currentMap = editableRef.current.map;
+    const removedProposition = propositionId
+      ? currentMap.propositions.find((proposition: any) => proposition.id === propositionId)
+      : null;
     const action = conceptIds.length
       ? `Removed ${conceptIds.length === 1 ? "concept" : "concepts"} "${conceptIds.map(id => conceptLabel(id, currentMap)).join(", ")}"`
-      : `Removed proposition "${propositionId}"`;
+      : removedProposition
+        ? `Removed connection "${propositionText(removedProposition, currentMap, relationBank)}"`
+        : `Removed proposition "${propositionId}"`;
     const removed = commitEdit(action, current => deleteSelection(current, {
       conceptIds,
       propositionId,
@@ -667,6 +683,9 @@ function App() {
     const canvas = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const x = (event.clientX - canvas.left) * 800 / canvas.width - drag.dx;
     const y = (event.clientY - canvas.top) * 600 / canvas.height - drag.dy;
+    const moved = drag.moved || Math.abs(x - drag.start.x) > 2 || Math.abs(y - drag.start.y) > 2;
+    if (!moved) return;
+    if (!drag.moved) setDrag({ ...drag, moved: true });
     const current = editableRef.current;
     const nextMap = {
       ...current.map,
@@ -681,6 +700,10 @@ function App() {
   };
   const finishDrag = () => {
     if (!drag) return;
+    if (!drag.moved) {
+      setDrag(null);
+      return;
+    }
     const current = editableRef.current;
     const movedTo = current.map.layout?.[drag.id];
     const movedFrom = drag.start;
@@ -704,15 +727,34 @@ function App() {
     }
     setDrag(null);
   };
-  const updateFocus = (focus_question: string) => {
-    commitEdit("Changed the focus question", current => ({
+  const updateFocusDraft = (focus_question: string) => {
+    if (!focusEditingRef.current) {
+      focusBeforeRef.current = editableRef.current.map.focus_question || "";
+      focusEditingRef.current = true;
+    }
+    focusDraftRef.current = focus_question;
+    setFocusDraft(focus_question);
+  };
+  const commitFocus = () => {
+    if (!focusEditingRef.current) return;
+    focusEditingRef.current = false;
+    const current = editableRef.current;
+    const previousFocus = focusBeforeRef.current;
+    const draft = focusDraftRef.current;
+    if (draft === previousFocus) return;
+    const previous: EditableState = {
+      ...current,
+      map: { ...current.map, focus_question: previousFocus },
+    };
+    const next: EditableState = {
       ...current,
       map: {
         ...current.map,
-        focus_question,
+        focus_question: draft,
         meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
       },
-    }));
+    };
+    commitSnapshotEdit("Changed the focus question", previous, next);
   };
   const panelWork = (id: string, derivation: any) => showWork[id]
     ? <div className="derivation">{Array.isArray(derivation) ? derivation.join("\n") : String(derivation || "Counted directly from the propositions you added.")}</div>
@@ -730,7 +772,7 @@ function App() {
       <div className="app-mark"><Monogram /></div>
       <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
       <div className="edition">Concepts <small>&amp;</small> relations</div>
-      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={map.focus_question || ""} onChange={event => updateFocus(event.target.value)} /></div>
+      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
       <div className="toolbar">
         <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action">Undo</button>
         <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
@@ -855,6 +897,7 @@ function App() {
                    dx: viewX - point.x,
                    dy: viewY - point.y,
                    start: { x: point.x, y: point.y },
+                    moved: false,
                  });
               }}
               onKeyDown={event => {
@@ -884,7 +927,7 @@ function App() {
       </section>
       <aside className="pane right-pane">
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">03 / structure</div><h2>What shape is this?</h2></div><button className="work" onClick={() => toggle("structure")}>{showWork.structure ? "hide" : "show your work"}</button></div><div className="metric-grid"><div className="metric"><strong>{structure?.concepts ?? map.concepts.length}</strong><span>concepts</span></div><div className="metric"><strong>{structure?.propositions ?? map.propositions.length}</strong><span>propositions</span></div><div className="metric"><strong>{structure?.components ?? "—"}</strong><span>components</span></div><div className="metric"><strong>{structure?.density !== undefined ? Number(structure.density).toFixed(2) : "—"}</strong><span>density</span></div></div><p className="observation">Shape: <strong>{structure?.label || "tree"}</strong>. {structure?.orphans?.length ? `${structure.orphans.length} concepts are not connected yet.` : "Every concept is part of the conversation."}</p>{panelWork("structure", structure?.derivation)}</div>
-         <div className="panel timeline-panel"><div className="panel-title"><h2>Map history</h2><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
+          <div className="panel timeline-panel"><div className="panel-title"><h2>Map history</h2><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.slice().reverse().map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp} title={displayTimestamp(event.timestamp)}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
       </aside>
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>

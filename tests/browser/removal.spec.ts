@@ -32,6 +32,7 @@ test("selects an edge with keyboard focus and removes it with undo/redo support"
     },
   };
   await page.addInitScript(({ storedMap }) => {
+    if (localStorage.getItem("history-removal-test-seeded")) return;
     localStorage.clear();
     localStorage.setItem("weft-manual-map", JSON.stringify(storedMap));
     localStorage.setItem("weft-manual-concept-bank", JSON.stringify([
@@ -42,6 +43,7 @@ test("selects an edge with keyboard focus and removes it with undo/redo support"
     localStorage.setItem("weft-manual-relation-bank", JSON.stringify([
       { id: "connects", label: "connects" },
     ]));
+    localStorage.setItem("history-removal-test-seeded", "1");
   }, { storedMap: map });
   await page.goto("/");
 
@@ -54,6 +56,10 @@ test("selects an edge with keyboard focus and removes it with undo/redo support"
   await remove.click();
   await expect(page.locator(".edge")).toHaveCount(1);
   await expect.poll(async () => (await page.evaluate(() => JSON.parse(localStorage.getItem("weft-manual-map")!))).propositions.length).toBe(1);
+  await expect(page.getByLabel("Map history timeline").locator(".timeline-entry").first())
+    .toContainText('Removed connection "A connects B"');
+  const persistedHistory = await page.evaluate(() => JSON.parse(localStorage.getItem("weft-manual-history")!));
+  expect(persistedHistory.timeline.at(-1).action).toBe('Removed connection "A connects B"');
 
   const banks = await page.evaluate(() => ({
     concepts: JSON.parse(localStorage.getItem("weft-manual-concept-bank")!),
@@ -62,8 +68,16 @@ test("selects an edge with keyboard focus and removes it with undo/redo support"
   expect(banks.concepts).toHaveLength(3);
   expect(banks.relations).toHaveLength(1);
 
+  await page.reload();
+  await expect(page.locator(".edge")).toHaveCount(1);
+  await expect(page.getByLabel("Map history timeline").locator(".timeline-entry").first())
+    .toContainText('Removed connection "A connects B"');
   await page.getByRole("button", { name: "Undo last action" }).click();
   await expect(page.locator(".edge")).toHaveCount(2);
+  await expect(page.getByLabel("Map history timeline").locator(".timeline-entry").first())
+    .toContainText("Undo: Removed connection");
   await page.getByRole("button", { name: "Redo last action" }).click();
   await expect(page.locator(".edge")).toHaveCount(1);
+  await expect(page.getByLabel("Map history timeline").locator(".timeline-entry").first())
+    .toContainText("Redo: Removed connection");
 });
