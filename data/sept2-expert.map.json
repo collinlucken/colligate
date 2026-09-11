@@ -1,0 +1,413 @@
+{
+  "id": "map-sept2-expert",
+  "title": "What is mind design? (instructor, Sept 2)",
+  "focus_question": "What is mind design?",
+  "genre": "concept",
+  "pack_id": "phil2400-f26",
+  "owner": "instructor",
+  "root": null,
+  "concepts": [
+    {
+      "id": "c-mind",
+      "label": "Mind",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-intentionality",
+      "label": "Intentionality",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-intentional-stance",
+      "label": "Intentional stance",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-daniel-dennett",
+      "label": "Daniel Dennett",
+      "type": "figure",
+      "external_ids": {
+        "wikidata": "Q312632"
+      },
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-intentional-interpretation",
+      "label": "Intentional interpretation",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-neural-networks",
+      "label": "Neural networks",
+      "type": "system-or-example",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-connectionism",
+      "label": "Connectionism",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-chatgpt",
+      "label": "ChatGPT",
+      "type": "system-or-example",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-gofai",
+      "label": "GOFAI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-formal-system",
+      "label": "Formal system",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-rules",
+      "label": "Rules",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-tokens",
+      "label": "Tokens",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-nfai",
+      "label": "NFAI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-embodied-and-embedded-ai",
+      "label": "Embodied and embedded AI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-roomba",
+      "label": "Roomba",
+      "type": "system-or-example",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    }
+  ],
+  "propositions": [
+    {
+      "id": "p1",
+      "subject": "c-mind",
+      "relation": "is-constituted-by",
+      "object": "c-intentionality",
+      "confidence": 5,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 14"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Mind",
+        "relation": "is constituted by",
+        "object": "Intentionality"
+      }
+    },
+    {
+      "id": "p2",
+      "subject": "c-intentionality",
+      "relation": "is-explained-by",
+      "object": "c-intentional-stance",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentionality",
+        "relation": "is explained by",
+        "object": "Intentional Stance"
+      }
+    },
+    {
+      "id": "p3",
+      "subject": "c-intentional-stance",
+      "relation": "was-invented-by",
+      "object": "c-daniel-dennett",
+      "confidence": null,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentional Stance",
+        "relation": "was invented by",
+        "object": "Dennett"
+      }
+    },
+    {
+      "id": "p4",
+      "subject": "c-intentional-stance",
+      "relation": "enables",
+      "object": "c-intentional-interpretation",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentional Stance",
+        "relation": "enables",
+        "object": "Intentional Interpretation"
+      }
+    },
+    {
+      "id": "p5",
+      "subject": "c-intentional-interpretation",
+      "relation": "is-applicable-to",
+      "object": "c-neural-networks",
+      "confidence": 3,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentional Interpretation",
+        "relation": "applies to",
+        "object": "Neural Networks"
+      }
+    },
+    {
+      "id": "p6",
+      "subject": "c-connectionism",
+      "relation": "developed-from",
+      "object": "c-neural-networks",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Neural Networks",
+        "relation": "gave rise to",
+        "object": "Connectionism"
+      }
+    },
+    {
+      "id": "p7",
+      "subject": "c-neural-networks",
+      "relation": "is-implemented-by",
+      "object": "c-chatgpt",
+      "confidence": null,
+      "justification": "\"powers\" in the original",
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Neural Networks",
+        "relation": "is implemented by",
+        "object": "ChatGPT"
+      }
+    },
+    {
+      "id": "p8",
+      "subject": "c-gofai",
+      "relation": "developed-from",
+      "object": "c-formal-system",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "GOFAI",
+        "relation": "developed from",
+        "object": "Formal System"
+      }
+    },
+    {
+      "id": "p9",
+      "subject": "c-formal-system",
+      "relation": "is-constituted-by",
+      "object": "c-rules",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Formal System",
+        "relation": "is constituted by",
+        "object": "Rules"
+      }
+    },
+    {
+      "id": "p10",
+      "subject": "c-rules",
+      "relation": "operates-on",
+      "object": "c-tokens",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Rules",
+        "relation": "is for manipulating",
+        "object": "Tokens"
+      }
+    },
+    {
+      "id": "p11",
+      "subject": "c-nfai",
+      "relation": "developed-from",
+      "object": "c-gofai",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "NFAI",
+        "relation": "developed from",
+        "object": "GOFAI"
+      }
+    },
+    {
+      "id": "p12",
+      "subject": "c-nfai",
+      "relation": "sees-greatest-hope-in",
+      "object": "c-neural-networks",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "NFAI",
+        "relation": "sees greatest hope in",
+        "object": "Neural Networks"
+      }
+    },
+    {
+      "id": "p13",
+      "subject": "c-nfai",
+      "relation": "sees-anti-representational-leaning-in",
+      "object": "c-embodied-and-embedded-ai",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "NFAI",
+        "relation": "sees anti-representational leaning in",
+        "object": "Embodied AI"
+      }
+    },
+    {
+      "id": "p14",
+      "subject": "c-roomba",
+      "relation": "is-an-example-of",
+      "object": "c-embodied-and-embedded-ai",
+      "confidence": null,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "instructor",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Embodied AI",
+        "relation": "has as an example",
+        "object": "Roomba"
+      }
+    }
+  ],
+  "layout": {},
+  "submaps": {},
+  "created_at": "2026-09-11T08:00:00Z"
+}

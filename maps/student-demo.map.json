@@ -1,0 +1,372 @@
+{
+  "id": "map-student-demo",
+  "title": "What is mind design? (demo student)",
+  "focus_question": "What is mind design?",
+  "genre": "concept",
+  "pack_id": "phil2400-f26",
+  "owner": "student-demo",
+  "root": null,
+  "concepts": [
+    {
+      "id": "c-mind",
+      "label": "Mind",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-intentionality",
+      "label": "Intentionality",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-intentional-stance",
+      "label": "Intentional stance",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-daniel-dennett",
+      "label": "Daniel Dennett",
+      "type": "figure",
+      "external_ids": {
+        "wikidata": "Q312632"
+      },
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-nfai",
+      "label": "NFAI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-embodied-and-embedded-ai",
+      "label": "Embodied and embedded AI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-roomba",
+      "label": "Roomba",
+      "type": "system-or-example",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-gofai",
+      "label": "GOFAI",
+      "type": "research-paradigm",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-formal-system",
+      "label": "Formal system",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-rules",
+      "label": "Rules",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-understanding",
+      "label": "Understanding",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    },
+    {
+      "id": "c-turing-test",
+      "label": "Turing test",
+      "type": "core-concept",
+      "external_ids": {},
+      "pack_id": "phil2400-f26"
+    }
+  ],
+  "propositions": [
+    {
+      "id": "p1",
+      "subject": "c-mind",
+      "relation": "is-constituted-by",
+      "object": "c-intentionality",
+      "confidence": 5,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 14"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Mind",
+        "relation": "is constituted by",
+        "object": "Intentionality"
+      }
+    },
+    {
+      "id": "p2",
+      "subject": "c-intentionality",
+      "relation": "is-explained-by",
+      "object": "c-intentional-stance",
+      "confidence": 4,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentionality",
+        "relation": "is explained by",
+        "object": "Intentional Stance"
+      }
+    },
+    {
+      "id": "p3",
+      "subject": "c-intentional-stance",
+      "relation": "was-invented-by",
+      "object": "c-daniel-dennett",
+      "confidence": 5,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Intentional Stance",
+        "relation": "was invented by",
+        "object": "Dennett"
+      }
+    },
+    {
+      "id": "p4",
+      "subject": "c-nfai",
+      "relation": "is-a-kind-of",
+      "object": "c-mind",
+      "confidence": 2,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "NFAI",
+        "relation": "is a kind of",
+        "object": "Mind"
+      }
+    },
+    {
+      "id": "p5",
+      "subject": "c-embodied-and-embedded-ai",
+      "relation": "is-a-kind-of",
+      "object": "c-nfai",
+      "confidence": 4,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 31"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Embodied AI",
+        "relation": "is a kind of",
+        "object": "NFAI"
+      }
+    },
+    {
+      "id": "p6",
+      "subject": "c-roomba",
+      "relation": "is-an-instance-of",
+      "object": "c-embodied-and-embedded-ai",
+      "confidence": 5,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Roomba",
+        "relation": "is an instance of",
+        "object": "Embodied AI"
+      }
+    },
+    {
+      "id": "p7",
+      "subject": "c-gofai",
+      "relation": "is-a-kind-of",
+      "object": "c-mind",
+      "confidence": 3,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "GOFAI",
+        "relation": "is a kind of",
+        "object": "Mind"
+      }
+    },
+    {
+      "id": "p8",
+      "subject": "c-gofai",
+      "relation": "is-constituted-by",
+      "object": "c-formal-system",
+      "confidence": 4,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 23"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "GOFAI",
+        "relation": "is constituted by",
+        "object": "Formal System"
+      }
+    },
+    {
+      "id": "p9",
+      "subject": "c-formal-system",
+      "relation": "is-constituted-by",
+      "object": "c-rules",
+      "confidence": 5,
+      "justification": null,
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 17"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Formal System",
+        "relation": "is constituted by",
+        "object": "Rules"
+      }
+    },
+    {
+      "id": "p10",
+      "subject": "c-gofai",
+      "relation": "enables",
+      "object": "c-understanding",
+      "confidence": 2,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "GOFAI",
+        "relation": "enables",
+        "object": "Understanding"
+      }
+    },
+    {
+      "id": "p11",
+      "subject": "c-gofai",
+      "relation": "prevents",
+      "object": "c-understanding",
+      "confidence": 3,
+      "justification": "Haugeland's closing thesis",
+      "anchors": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 33"
+        }
+      ],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "GOFAI",
+        "relation": "prevents",
+        "object": "Understanding"
+      }
+    },
+    {
+      "id": "p12",
+      "subject": "c-turing-test",
+      "relation": "was-invented-by",
+      "object": "c-gofai",
+      "confidence": 1,
+      "justification": null,
+      "anchors": [],
+      "learned_at": "2026-09-11T08:00:00Z",
+      "holds_from": null,
+      "holds_to": null,
+      "status": "asserted",
+      "author": "student-demo",
+      "derived_from": null,
+      "as_written": {
+        "subject": "Turing test",
+        "relation": "was invented by",
+        "object": "GOFAI"
+      }
+    }
+  ],
+  "layout": {},
+  "submaps": {},
+  "created_at": "2026-09-11T08:00:00Z"
+}

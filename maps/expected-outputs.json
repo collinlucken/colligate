@@ -1,0 +1,148 @@
+{
+  "sept2_expert": {
+    "structure": {
+      "concepts": 15,
+      "propositions": 14,
+      "components": 1,
+      "cycles": 0,
+      "diameter": 9,
+      "hub": "Neural networks",
+      "hub_degree": 4,
+      "spoke": 0.29,
+      "chain": 0.4,
+      "degree2": 6,
+      "roots": [
+        "Mind",
+        "Intentional interpretation",
+        "Neural networks",
+        "Connectionism",
+        "GOFAI",
+        "Formal system",
+        "NFAI",
+        "Embodied and embedded AI"
+      ],
+      "free": 0,
+      "weak": 0,
+      "orphans": [],
+      "density": 0.93,
+      "degrees": {
+        "Neural networks": 4,
+        "Intentional stance": 3,
+        "NFAI": 3,
+        "Intentionality": 2,
+        "Intentional interpretation": 2,
+        "GOFAI": 2,
+        "Formal system": 2,
+        "Rules": 2,
+        "Embodied and embedded AI": 2,
+        "Mind": 1,
+        "Daniel Dennett": 1,
+        "Connectionism": 1,
+        "ChatGPT": 1,
+        "Tokens": 1,
+        "Roomba": 1
+      }
+    },
+    "inference": {
+      "implied": [
+        "NFAI developed from Formal system   <- NFAI developed from GOFAI; GOFAI developed from Formal system (developed from is transitive)"
+      ],
+      "conflicts": [],
+      "taxonomic_cycles": [],
+      "ill_typed": []
+    }
+  },
+  "student_demo": {
+    "structure": {
+      "concepts": 12,
+      "propositions": 12,
+      "components": 1,
+      "cycles": 1,
+      "diameter": 6,
+      "hub": "GOFAI",
+      "hub_degree": 5,
+      "spoke": 0.42,
+      "chain": 0.5,
+      "degree2": 6,
+      "roots": [
+        "Mind",
+        "Understanding",
+        "Turing test"
+      ],
+      "free": 0,
+      "weak": 0,
+      "orphans": [],
+      "density": 1.0,
+      "degrees": {
+        "GOFAI": 5,
+        "Mind": 3,
+        "Intentionality": 2,
+        "Intentional stance": 2,
+        "NFAI": 2,
+        "Embodied and embedded AI": 2,
+        "Formal system": 2,
+        "Understanding": 2,
+        "Daniel Dennett": 1,
+        "Roomba": 1,
+        "Rules": 1,
+        "Turing test": 1
+      }
+    },
+    "inference": {
+      "implied": [
+        "Embodied and embedded AI is a kind of Mind   <- Embodied and embedded AI is a kind of NFAI; NFAI is a kind of Mind (is a kind of is transitive)",
+        "Roomba is an instance of NFAI   <- Roomba is an instance of Embodied and embedded AI; Embodied and embedded AI is a kind of NFAI (is an instance of inherits along is a kind of)",
+        "Roomba is an instance of Mind   <- Roomba is an instance of NFAI; NFAI is a kind of Mind (is an instance of inherits along is a kind of)"
+      ],
+      "conflicts": [
+        "GOFAI enables Understanding  vs  GOFAI prevents Understanding"
+      ],
+      "taxonomic_cycles": [],
+      "ill_typed": [
+        "Turing test (core-concept) was invented by GOFAI (research-paradigm); relation requires any -> ['figure']"
+      ]
+    }
+  },
+  "compare_student_vs_expert": {
+    "shared": [
+      "Mind -> is constituted by -> Intentionality",
+      "Intentionality -> is explained by -> Intentional stance",
+      "Intentional stance -> was invented by -> Daniel Dennett",
+      "Formal system -> is constituted by -> Rules"
+    ],
+    "only_student": [
+      "Turing test -> was invented by -> GOFAI",
+      "GOFAI -> enables -> Understanding",
+      "Embodied and embedded AI -> is a kind of -> NFAI",
+      "GOFAI -> is constituted by -> Formal system",
+      "GOFAI -> is a kind of -> Mind",
+      "GOFAI -> prevents -> Understanding",
+      "Roomba -> is an instance of -> Embodied and embedded AI",
+      "NFAI -> is a kind of -> Mind"
+    ],
+    "only_expert": [
+      "Connectionism -> developed from -> Neural networks",
+      "GOFAI -> developed from -> Formal system",
+      "NFAI -> sees anti-representational leaning in -> Embodied and embedded AI",
+      "NFAI -> sees greatest hope in -> Neural networks",
+      "Neural networks -> is implemented by -> ChatGPT",
+      "Intentional stance -> enables -> Intentional interpretation",
+      "Rules -> operates on -> Tokens",
+      "NFAI -> developed from -> GOFAI",
+      "Intentional interpretation -> is applicable to -> Neural networks",
+      "Roomba -> is an example of -> Embodied and embedded AI"
+    ],
+    "disputes": [
+      "Embodied and embedded AI -> is a kind of -> NFAI   vs   NFAI -> sees anti-representational leaning in -> Embodied and embedded AI",
+      "GOFAI -> is constituted by -> Formal system   vs   GOFAI -> developed from -> Formal system",
+      "Roomba -> is an instance of -> Embodied and embedded AI   vs   Roomba -> is an example of -> Embodied and embedded AI"
+    ],
+    "recall": 0.29,
+    "precision": 0.33,
+    "f1": 0.31,
+    "goldsmith": 0.41,
+    "concepts_shared": 10,
+    "concepts_student": 12,
+    "concepts_expert": 15
+  }
+}

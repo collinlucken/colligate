@@ -1,0 +1,5038 @@
+{
+  "id": "phil2400-f26",
+  "title": "PHIL 2400: Minds and Machines (Fall 2026)",
+  "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "authors": [
+    "Collin Lucken, Bowdoin College"
+  ],
+  "format_version": "0.1",
+  "concept_types": [
+    {
+      "id": "concept",
+      "label": "Concept",
+      "universal": true
+    },
+    {
+      "id": "figure",
+      "label": "Figure",
+      "universal": true
+    },
+    {
+      "id": "text",
+      "label": "Text",
+      "universal": true
+    },
+    {
+      "id": "example",
+      "label": "Example",
+      "universal": true
+    },
+    {
+      "id": "core-concept",
+      "label": "Core concept",
+      "color": "#2f6fdd",
+      "extends": "concept"
+    },
+    {
+      "id": "research-paradigm",
+      "label": "Research paradigm",
+      "color": "#c0392b",
+      "extends": "concept"
+    },
+    {
+      "id": "system-or-example",
+      "label": "System or example",
+      "color": "#2e8b57",
+      "extends": "example"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "c-mind-design",
+      "label": "Mind design",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the attempt to understand mind (thinking, intellect) in terms of its design: how it is built and how it works. Oriented to mechanism and structure rather than correlation or law; to \"how\" rather than \"what.\"",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 11"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-psychology-by-reverse-engineering",
+      "label": "Psychology by reverse engineering",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Haugeland's one-line gloss on mind design: explain the mind by working out what design would produce it. Note the assumption smuggled in: that minds have designs at all.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 11"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-materialism-minimal-sense",
+      "label": "Materialism (minimal sense)",
+      "aliases": [
+        "materialism"
+      ],
+      "type": "core-concept",
+      "definition": "the shared premise of every author in the volume: matter, suitably selected and arranged, suffices for intelligence. The live question is never whether but how.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 12"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-perspective",
+      "label": "Perspective",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the same stuff can be rightly described in different terms (silk scarf / frayed strands; clockwork / scrap brass). Haugeland's organizing question follows: what constrains how something can rightly be described — its form, its material, or what it does? Different answers to that question generate the different research programs in the rest of the chapter.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 12"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-turing-test",
+      "label": "Turing test",
+      "aliases": [
+        "imitation game",
+        "the Turing test"
+      ],
+      "type": "core-concept",
+      "definition": "Turing's 1950 proposal that intelligence is a matter of behavioral capacity, tested by verbal behavior. Two points Haugeland insists on: (a) it is a sufficient condition, never a necessary one — passing proves intelligence, failing proves nothing; (b) talking is singled out because it \"gathers within itself, at one remove\" all other intelligent abilities.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-what-the-test-ignores",
+      "label": "What the test ignores",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "real-world perception and action. Haugeland's diagnosis: neglecting real-time environmental interaction pushes designers toward overemphasizing internal representation and modeling.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 13-14"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intentionality",
+      "label": "Intentionality",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "not intending in the modern sense but aboutness: the character of one thing being of or about something else. Brentano: \"intentionality is the mark of the mental.\"",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 14"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intentional-object",
+      "label": "Intentional object",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "that which an intentional state is about. The puzzle: intentionality looks like a relation, but unlike every other relation it does not require its second term to exist (you can fear a party that never happens).",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 14"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-holism",
+      "label": "Holism",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "behavior is to be read in context and as part of a consistent pattern, never in isolation.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        },
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 10"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-interpretation",
+      "label": "Interpretation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "construing such a pattern as rational, i.e. as acting so as best to satisfy goals given what the system knows.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-rationality-is-the-mother-of-intention",
+      "label": "Rationality is the mother of intention",
+      "aliases": [
+        "Dennett's slogan"
+      ],
+      "type": "core-concept",
+      "definition": "Dennett's slogan; the pattern of rational behavior is what licenses attributing beliefs and desires at all.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intentional-stance",
+      "label": "Intentional stance",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Dennett's perspective, and the entities regarded from it. The crystal analogy: the pattern must be broad and reliable but need not be perfect, and it is the regularity that makes an individual flaw (a false belief) intelligible.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intentional-system",
+      "label": "Intentional system",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Dennett's perspective, and the entities regarded from it. The crystal analogy: the pattern must be broad and reliable but need not be perfect, and it is the regularity that makes an individual flaw (a false belief) intelligible.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-original-vs-derivative-intentionality",
+      "label": "Original vs. derivative intentionality",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "sentences, pictures and maps are about things only because we mean them that way (derivative); our own thoughts are about things full stop (original). Some intentionality must be original or none is. The problem for mind design: AI systems are artifacts too — so can an artifact have original intentionality? Haugeland's candidate answer: what matters is active, rational engagement with a world, not natural vs. artificial origin.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 16"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-formal-system",
+      "label": "Formal system",
+      "aliases": [
+        "formal systems"
+      ],
+      "type": "core-concept",
+      "definition": "token manipulation + digital + medium independent. Chess is one; baseball is not.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 17"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "gofai",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-token-manipulation-system",
+      "label": "Token manipulation system",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "fully specified by (1) a set of token types, (2) allowable starting positions, (3) formal rules for changing arrangements into others. Formality is twofold: the rules specify only next arrangements, and specify them in terms of the current arrangement alone. Hence: entirely self-contained.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 17"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-digital",
+      "label": "Digital",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a property of techniques for producing and later re-identifying things. Digital = positive (re-identification can be absolutely perfect) + reliable (it almost always is). The penny-on-the-checkerboard example: \"fourth rank, second file\" is achievable perfectly; \"0.43747 inches from the edge\" never is.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 18-19"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-medium-independence",
+      "label": "Medium independence",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "what the system is does not depend on what it is made of. Chess works in ivory, plastic, light, or radio-controlled helicopters; fire and food are not medium independent. Ancestor of multiple realizability, a thread running through the whole course.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 19"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-automatic-formal-system",
+      "label": "Automatic formal system",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a formal system that \"moves\" by itself: a physical device whose normal operation manipulates its tokens in accord with the rules. This is what a computer is, formally described.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 20"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-implementation",
+      "label": "Implementation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "using one automatic formal system to build another; this is what programming is. The tokens not being used to implement the special machine are the program.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 20"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-universal-machine",
+      "label": "Universal machine",
+      "aliases": [
+        "universality",
+        "universal Turing machine"
+      ],
+      "type": "core-concept",
+      "definition": "Turing (1937): some machines can implement any well-defined automatic formal system, given enough storage and time; and such machines can be very simple. Every ordinary programmable computer is one. This is why AI looked possible before anything had been built.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 20-21"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "gofai",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-algorithm",
+      "label": "Algorithm",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a procedure guaranteed to produce the result in finite time.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 21"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-heuristic",
+      "label": "Heuristic",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a rule of thumb: fairly reliable, no guarantee. Whether a given procedure counts as one or the other depends on how you describe the task — the same chess routine is an algorithm for counting material and a heuristic for estimating position strength. (Also the resolution of \"computers never make mistakes.\")",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 21"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-digital-simulation",
+      "label": "Digital simulation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "using digital token manipulation to model systems that are not themselves digital (images, weather, dynamic systems generally).",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 22"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-turing-s-prediction",
+      "label": "Turing's prediction",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "that a machine would pass the test by 2000. Haugeland reconstructs the reasoning: verbal input/output is a formal function; formal functions are implementable on a universal machine; anything nondigital can be digitally simulated. Note what the argument contains no claim about — how the mind actually works.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 22-23"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-gofai",
+      "label": "GOFAI",
+      "aliases": [
+        "good old-fashioned AI",
+        "classical AI",
+        "symbolic AI",
+        "symbol-manipulation AI",
+        "language-of-thought AI"
+      ],
+      "type": "research-paradigm",
+      "definition": "also \"classical,\" \"symbol-manipulation,\" or \"language-of-thought\" AI. The thesis: the mind just is a computer whose internal states and processes can be regarded as explicit thinking or reasoning. Dominant from the mid-1950s through at least the mid-1980s.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 23"
+        },
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "gofai",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-symbol-vs-formal-token",
+      "label": "Symbol vs. formal token",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "numerals and arithmetic signs mean something (symbols); chess pieces and go stones mean nothing (mere formal tokens). GOFAI's bet is that thoughts are symbols.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 24"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "gofai",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-interpreted-formal-system",
+      "label": "Interpreted formal system",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a formal system whose tokens are assigned meanings. The letter-game example and its three translation schemes: what makes a scheme the right one is that it renders the strings consistently reasonable and sensible — not merely well-formed.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 24"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-semantic-interpretation",
+      "label": "Semantic interpretation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "attributing meanings to strings of symbols (translation). Also holistic: an isolated string that comes out true by coincidence is not interpretation, only a consistent pattern is.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 26"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intentional-interpretation",
+      "label": "Intentional interpretation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "attributing intentional states to a system. Haugeland's pair: GOFAI grounds intentionality in semantic interpretation; connectionism can at best support intentional interpretation (Dennett's stance).",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 26"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-intelligence-by-explicit-reasoning",
+      "label": "Intelligence by explicit reasoning",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "GOFAI's core claim: intermediate token strings (conjectures, subgoals, blind alleys) are steps in reasoning the problem through, provided the system handles an open-ended range of problems and actually arrives at solutions via those steps.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 26-27"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-search-and-heuristics-vs-knowledge-representation",
+      "label": "Search and heuristics vs. knowledge representation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the early GOFAI emphasis (efficient search for well-posed problems) and its failure mode: brittle, \"narrow-minded,\" no common sense. Later emphasis on common-sense knowledge, where the hard problem turns out to be organization — keeping vast knowledge at the system's \"cognitive fingertips\" without exhaustive search.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 27"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-gofai-s-disappointments",
+      "label": "GOFAI's disappointments",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "partial solutions to common sense; difficulty designing systems that revise their own knowledge coherently; poor pattern recognition and learning.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 28"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-nfai",
+      "label": "NFAI",
+      "aliases": [
+        "new-fangled AI"
+      ],
+      "type": "research-paradigm",
+      "definition": "Haugeland's grab-bag label: scientific mind design that is not GOFAI.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 28"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-connectionism",
+      "label": "Connectionism",
+      "aliases": [
+        "connectionist AI",
+        "PDP",
+        "parallel distributed processing",
+        "neural-network AI"
+      ],
+      "type": "research-paradigm",
+      "definition": "networks of many simple active units richly interconnected. No central processor, no separate memory. Key quantities: a unit's activation level (one number) and a connection's weight or strength (another). Short-term memory = slow state change; long-term memory = the weights.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 28-29"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "connectionist",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-pattern-processing",
+      "label": "Pattern processing",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "what networks are good at, and fast at (parallelism): finding similarities, recognizing repeated or near-repeated patterns, filling in incomplete patterns, transforming patterns into associated ones. Also training: weights induced by exposure to examples — though Haugeland notes the known training techniques are not psychologically realistic.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 29-30"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-the-brain-analogy-and-its-limits",
+      "label": "The brain analogy, and its limits",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "what makes connectionism interesting is not that it mimics biology at some level of description but what the networks can do. Any correct GOFAI account would also model the brain at some level.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 29"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-the-syntactic-gap",
+      "label": "The syntactic gap",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "GOFAI is very good at exactly the patterns connectionism handles poorly: the grammatical/logical patterns of language and inference. Haugeland's constraint on the whole field: no approach that cannot accommodate language ability can be adequate.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 30"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-symbolic-implementation-as-pyrrhic-victory",
+      "label": "Symbolic implementation as Pyrrhic victory",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a network that implements symbol manipulation is relegated to \"hardware,\" and the psychologically relevant mind design is still GOFAI.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 30-31"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-embodied-and-embedded-ai",
+      "label": "Embodied and embedded AI",
+      "aliases": [
+        "Embodied AI",
+        "embedded AI",
+        "situated AI",
+        "embodied cognition"
+      ],
+      "type": "research-paradigm",
+      "definition": "the alternative to systems that take an input, work on it, and produce an output: let the intelligent system be the larger interactive whole, body and environment included. The key-and-lock example (precise sensing and modeling vs. crude detectors, a flexible grip, and a funnel around the keyhole); the hammer example (knowledge held in the shape of tools, in bodily skills, and in the structure of a culture — \"neither stored nor used inside the head of anyone\").",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 31-33"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "embodied",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-understanding",
+      "label": "Understanding",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Haugeland's own thesis, held back to the end: no current approach takes understanding seriously, where understanding is distinct from and prerequisite to knowledge. His claim (empirical, not in-principle) is that only people understand anything.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 33-34"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-proto-concept",
+      "label": "Proto-concept",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a distinction a system makes or marks in coping with some range of objects, however embodied (skillful response, symbol structure, whatever).",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 33"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-the-three-conditions-on-understanding",
+      "label": "The three conditions on understanding",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "a system understands insofar as it (1) takes responsibility for applying its proto-concepts correctly, (2) takes responsibility for their empirical adequacy, and (3) takes a firm stand on what can and cannot happen. When met, proto-concepts are concepts proper. The mark of understanding: the system \"appreciates for itself the difference between truth and falsity … and it cares.\"",
+      "sources": [
+        {
+          "source_id": "haugeland-2023",
+          "locator": "p. 33-34"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-the-four-clusters-of-questions",
+      "label": "The four clusters of questions",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the nature of mind and the mind–body problem; the evolution of mind; freedom and purpose; how psychopathologies are possible. Topics that fall outside them (e.g. the nature of computation) are closely related.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 1-2"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-artificial-intelligence",
+      "label": "Artificial intelligence",
+      "aliases": [
+        "AI"
+      ],
+      "type": "research-paradigm",
+      "definition": "makes computers do the sorts of things minds can do: interpreting language or camera input, diagnosis, virtual worlds, robot control.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 4"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-cybernetics",
+      "label": "Cybernetics",
+      "aliases": [
+        "control theory"
+      ],
+      "type": "research-paradigm",
+      "definition": "studies the functioning of self-regulating systems, from automated factories to living cells and organisms. One of Boden's two \"footpaths.\"",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 4"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "cybernetic",
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-why-computational-concepts-help",
+      "label": "Why computational concepts help",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "they express ideas about mental processes more clearly than verbal concepts; implemented as models they test a theory's coherence and implications; they expose gaps and show a theory could be true. Whether it is true still needs psychological and neuroscientific evidence.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 4"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-universal-grammar",
+      "label": "Universal grammar",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Boden's example of a question sharpened by computational work: do all languages share an underlying grammar, and how are a mother tongue's rules learned and represented?",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 5"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-chinese-room",
+      "label": "Chinese Room",
+      "aliases": [
+        "Chinese Room argument",
+        "Searle's Chinese Room"
+      ],
+      "type": "system-or-example",
+      "definition": "Searle's argument (forward reference to ch. 16.v.c): a monoglot English speaker shuffling squiggles by rule never understands Chinese; moral, AI programs are intrinsically meaningless and understanding requires a brain. You read it Oct 15.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 5"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-passing-the-turing-test",
+      "label": "Passing the Turing Test",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the companion argument: indistinguishable linguistic output would not prove real intelligence, understanding, or consciousness.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 5"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-zombie",
+      "label": "Zombie",
+      "aliases": [],
+      "type": "system-or-example",
+      "definition": "a system behaviorally like us but with nothing going on inside. Boden notes some cognitive scientists hold the very notion is incoherent, which would make zombie fiction literally non-sense.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 5"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-what-a-5-year-old-robot-would-require",
+      "label": "What a 5-year-old robot would require",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "perceptual discrimination, motor skills, learning, problem solving, language mastery — each dependent on other subfields. Boden's point: the parts are not separable in practice.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 6"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-emotion-motivation-and-freedom-as-computational-topics",
+      "label": "Emotion, motivation, and freedom as computational topics",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the nursemaid model and the architecture of grief. Freedom on this view is an aspect of how a mind works — constrained by goals, priorities, deliberation, urgency judgments, emotional reactions — not a matter of randomness or spiritual influence. The cricket, by contrast, lacks the mental architecture to grieve and has no way of developing it.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 6-7"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-biological-tricks-hardwired-mechanisms",
+      "label": "Biological tricks / hardwired mechanisms",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the cricket locating a mate, the frog's retina-to-muscle reflex. Humans use such tricks too (sound localization) but are not confined to them.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 7"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-self-organization",
+      "label": "Self-organization",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "some brain structures arise spontaneously in the womb, so an innate ability need not be genetically coded in detail. Computer modelling is what showed this is possible.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 7"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-cyborg-science",
+      "label": "Cyborg science",
+      "aliases": [
+        "reinvention of nature",
+        "Haraway's critique"
+      ],
+      "type": "core-concept",
+      "definition": "Haraway's critique: the information-and-computation sciences express a post-war \"lived social reality\" in which minds and people are constructed as natural–technical objects. Boden concedes the historical charge and largely the \"reinvention\" charge, but not the conclusion that cognitive science is epistemologically compromised.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 7"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-verum-factum",
+      "label": "Verum factum",
+      "aliases": [
+        "maker's knowledge",
+        "if you can build it, you can understand it"
+      ],
+      "type": "core-concept",
+      "definition": "Vico's tradition: to understand something properly you must be able to make it; observation and argument are not enough. Boden's compression: \"if you can build it, you can understand it.\" This is the deep justification for building models rather than only theorizing.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 8"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-cognitive-science-is-catholic",
+      "label": "Cognitive science is catholic",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "it covers all aspects of mind and behaviour; it draws on many disciplines; it relies on more than one kind of theory.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 9"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-cognition-conation-affect",
+      "label": "Cognition / conation / affect",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the older technical distinction the label unhelpfully imports; \"cognition\" was originally coined to exclude motivation and emotion.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 10"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-cognitive-science",
+      "label": "Cognitive science",
+      "aliases": [
+        "cognitive sciences",
+        "Boden's definition of cognitive science"
+      ],
+      "type": "research-paradigm",
+      "definition": "cognitive science is the interdisciplinary study of mind, informed by theoretical concepts drawn from computer science and control theory. Better summarized as the study of mind as machine. The core assumption: the same type of scientific theory applies to minds and to mindlike artefacts.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 12"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-two-footpaths",
+      "label": "Two footpaths",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the two sources of computational concepts: (a) computer science, AI, software engineering; (b) information theory and control engineering, i.e. cybernetics. The pendulum swings between them are, for Boden, the central plot of the whole history.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 12-13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-member-disciplines",
+      "label": "Member disciplines",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "psychology, linguistics, AI, A-Life, neuroscience, philosophy, anthropology; plus ethology and evolutionary theory.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 12"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-interdisciplinarity-vs-multidisciplinarity",
+      "label": "Interdisciplinarity vs. multidisciplinarity",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the stronger relation: borrowing theoretical ideas, not merely data, across fields. Boden's claim is that even the most separate specialisms share historical roots.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 12"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-computational-concepts-using-computers-building-models",
+      "label": "Computational concepts ≠ using computers ≠ building models",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the criterion for being in the field is using computational concepts as core theoretical terms. Geologists use computers; Chomsky's linguistics, von Neumann's cellular automata, and Marr's early brain theories were formal models, not running simulations; Minsky's \"society of mind\" and \"frames,\" Arbib's schemas, and Abelson's belief systems were not even formal.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-turing-s-definition-of-computation",
+      "label": "Turing's definition of computation",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "still the only rigorous one, and it covers neither cybernetics nor connectionist AI. Boden uses \"computation\" in the looser, wider modern sense and flags the loss of rigour.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-dynamical-systems",
+      "label": "Dynamical systems",
+      "aliases": [],
+      "type": "research-paradigm",
+      "definition": "falls on the cybernetic side; claims to explain the temporal aspects of cognition that earlier approaches ignored.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 13"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-a-life",
+      "label": "A-Life",
+      "aliases": [
+        "artificial life",
+        "ALife"
+      ],
+      "type": "research-paradigm",
+      "definition": "artificial life; usually distances itself from cognitive science's representational (\"Cartesian\") view of mind, but shares its cybernetic ancestry (von Neumann, Turing, Ashby) and counts in so far as it builds artifacts demonstrating basic cognitive abilities.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 16-17"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "embodied",
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-technological-vs-psychological-or-biological-ai",
+      "label": "Technological vs. psychological (or biological) AI",
+      "aliases": [],
+      "type": "research-paradigm",
+      "definition": "motive one: build useful systems. Motive two: use software and robotics to understand human, animal, or all possible minds. Only the second is squarely within cognitive science. A third, occasional motive — build a real intelligence — underlies the famous debates (strong AI, strong A-Life) but is a minority taste.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 14-15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-deep-blue",
+      "label": "Deep Blue",
+      "aliases": [],
+      "type": "system-or-example",
+      "definition": "Boden's illustration of technological AI: dedicated chips, 200 million positions per second, exhaustive eight-move look-ahead. Biologically unrealistic, therefore irrelevant to how humans play chess — except as a refutation of in-principle claims that computers cannot do X (Dreyfus on chess).",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 15"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-knowledge-engineering",
+      "label": "Knowledge engineering",
+      "aliases": [],
+      "type": "research-paradigm",
+      "definition": "expert-system methods for questioning human experts to make their expertise explicit; an example of technological AI still grounded in intuitions about human thinking.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 15-16"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-software-vs-hardware",
+      "label": "Software vs. hardware",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "the standard quick contrast between cognitive science and neuroscience. Boden accepts it as a summary but insists the traffic is two-way: \"What the Frog's Eye Tells the Frog's Brain,\" thirty years of computational brain modelling, neuroscientists asking what functions cells compute.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 16"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-evolutionary-psychology",
+      "label": "Evolutionary psychology",
+      "aliases": [],
+      "type": "research-paradigm",
+      "definition": "where much cognitively relevant anthropology now appears; also the target of the \"Just So stories\" worry raised at 3.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 17"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-philosophical-fault-lines",
+      "label": "Philosophical fault lines",
+      "aliases": [],
+      "type": "core-concept",
+      "definition": "Boden's explanation for the many competing definitions and camps: the deepest divisions are philosophical, so that what could even count as an explanation is not always agreed. Disputes over the mind–body distinction and over what counts as a representation are her examples.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1",
+          "locator": "p. 17"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-john-haugeland",
+      "label": "John Haugeland",
+      "aliases": [
+        "Haugeland"
+      ],
+      "type": "figure",
+      "definition": "the author, and the editor of Mind Design in all three editions. Coined GOFAI in Artificial Intelligence: The Very Idea (1985). Ch. 2 is his editor's introduction, so for §§2.1–2.4 he is drawing a map rather than arguing a thesis; his own view arrives only in §2.5, on understanding, and is developed further in Having Thought (1997). [COURSE]",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1945–2010"
+    },
+    {
+      "id": "c-carl-f-craver",
+      "label": "Carl F. Craver",
+      "aliases": [
+        "Craver"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-colin-klein",
+      "label": "Colin Klein",
+      "aliases": [
+        "Klein"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-alan-turing",
+      "label": "Alan Turing",
+      "aliases": [
+        "A. M. Turing",
+        "Turing"
+      ],
+      "type": "figure",
+      "definition": "appears twice, in two different roles, and Haugeland is careful to separate them. In 1937, the mathematician who proved that universal machines exist and gave a design for one — the result that made AI look possible. In 1950, the author of the behavioral criterion for intelligence and of the prediction (false, but \"not foolishly\" so) that a machine would pass it by 2000. You read the 1950 paper on Sept 15 as ch. 6. [COURSE]",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        },
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q7251"
+      },
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1912–1954"
+    },
+    {
+      "id": "c-franz-brentano",
+      "label": "Franz Brentano",
+      "aliases": [
+        "Brentano"
+      ],
+      "type": "figure",
+      "definition": "Austrian philosopher; source of the claim that \"intentionality is the mark of the mental.\" Not a materialist: he took the puzzle about relations to nonexistent objects to show that mind is a different kind of thing from matter. Haugeland uses him to set the problem that Dennett then answers.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1838–1917"
+    },
+    {
+      "id": "c-daniel-dennett",
+      "label": "Daniel Dennett",
+      "aliases": [
+        "Daniel C. Dennett",
+        "Dennett"
+      ],
+      "type": "figure",
+      "definition": "accepts Brentano's definition of the mental but gives it a materialist reading: the intentional stance, holism plus interpretation, \"rationality is the mother of intention\" (1971). Haugeland's verdict on him is double-edged — the account answers Brentano but is \"completely silent\" about how such a system could be built. You read \"True Believers\" on Oct 22 as ch. 11. [COURSE]",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        },
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q312632"
+      },
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1942–2024"
+    },
+    {
+      "id": "c-john-searle",
+      "label": "John Searle",
+      "aliases": [
+        "Searle"
+      ],
+      "type": "figure",
+      "definition": "named once, in a parenthesis, as the exception to the consensus that intelligence is a matter of behavioral capacity. That parenthesis is a forward reference to the Chinese Room. You read \"Minds, Brains, and Programs\" on Oct 15 as ch. 12. [COURSE]",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1932–"
+    },
+    {
+      "id": "c-w-v-o-quine",
+      "label": "W. V. O. Quine",
+      "aliases": [
+        "Quine"
+      ],
+      "type": "figure",
+      "definition": "cited in note 1 as the source of both halves of Dennett's idea (holism and interpretation), via Word and Object (1960). Haugeland's parenthetical gloss is worth keeping: meaning is \"the linguistic or symbolic counterpart of intentionality.\"",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1908–2000"
+    },
+    {
+      "id": "c-allen-newell",
+      "label": "Allen Newell",
+      "aliases": [
+        "Newell"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1927–1992"
+    },
+    {
+      "id": "c-herbert-simon",
+      "label": "Herbert Simon",
+      "aliases": [
+        "Simon"
+      ],
+      "type": "figure",
+      "definition": "\"one of the high priests of computational psychology\"; took up the challenge that computational psychology could say nothing about emotion. Note his origin in economics and management science. [COURSE]",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        },
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1916–2001"
+    },
+    {
+      "id": "c-marvin-minsky",
+      "label": "Marvin Minsky",
+      "aliases": [
+        "Minsky"
+      ],
+      "type": "figure",
+      "definition": "cited for work on knowledge representation and natural language (frames). Not in the Mind Design III spine, but he recurs in Boden.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        },
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1927–2016"
+    },
+    {
+      "id": "c-hubert-dreyfus",
+      "label": "Hubert Dreyfus",
+      "aliases": [
+        "Dreyfus"
+      ],
+      "type": "figure",
+      "definition": "cited twice, once as a surveyor of knowledge-representation work and once as a critic of it. The phenomenological objection to GOFAI. He reappears in Boden as the man whose in-principle predictions about chess were refuted.",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        },
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1929–2017"
+    },
+    {
+      "id": "c-margaret-boden",
+      "label": "Margaret Boden",
+      "aliases": [
+        "Margaret A. Boden",
+        "Boden"
+      ],
+      "type": "figure",
+      "definition": "the author. British philosopher and cognitive scientist at Sussex; Mind as Machine is her two-volume, 1,600-page history of the field. Note her position in the debates she is narrating: she is a defender of a broad definition of cognitive science, one that includes cybernetics and connectionism against the \"purist symbolists.\" She is also an interlocutor in this course in her own right — you read \"Escaping from the Chinese Room\" on Oct 20 as ch. 13. [COURSE]",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1936–"
+    },
+    {
+      "id": "c-george-a-miller",
+      "label": "George A. Miller",
+      "aliases": [
+        "Miller"
+      ],
+      "type": "figure",
+      "definition": "the founder quoted as saying that speaking for cognitive science \"is a bum's game\"; co-author of Plans and the Structure of Behavior (1960); co-founder with Bruner of Harvard's Center for Cognitive Studies (1961); and the source of the explanation for the field's misleading name — \"cognitive\" was chosen to set the field off from behaviourism, not to exclude emotion.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1920–2012"
+    },
+    {
+      "id": "c-jerome-bruner",
+      "label": "Jerome Bruner",
+      "aliases": [
+        "Bruner"
+      ],
+      "type": "figure",
+      "definition": "the other co-founder of the Harvard centre; studied values by way of their effect on perception.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1915–2016"
+    },
+    {
+      "id": "c-nelson-goodman",
+      "label": "Nelson Goodman",
+      "aliases": [
+        "Goodman"
+      ],
+      "type": "figure",
+      "definition": "philosopher, co-founder of Harvard's Project Zero; Boden's example of the \"occasional interdisciplinary philosopher\" in house.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1906–1998"
+    },
+    {
+      "id": "c-christopher-longuet-higgins",
+      "label": "Christopher Longuet-Higgins",
+      "aliases": [
+        "Longuet-Higgins"
+      ],
+      "type": "figure",
+      "definition": "theoretical chemist turned cognitive scientist; put \"cognitive sciences\" into print in 1973, defending AI-based psychology against a hostile mathematician.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1923–2004"
+    },
+    {
+      "id": "c-ernest-lepore",
+      "label": "Ernest Lepore",
+      "aliases": [
+        "Lepore"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-zenon-pylyshyn",
+      "label": "Zenon Pylyshyn",
+      "aliases": [
+        "Pylyshyn"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-michael-wheeler",
+      "label": "Michael Wheeler",
+      "aliases": [
+        "Wheeler"
+      ],
+      "type": "figure",
+      "definition": "cited for the 2005 chapter title \"It's Cognitive Science — But Not As We Know It,\" her opening evidence that the definitional problem has gotten worse, not better.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-harold-guetzkow",
+      "label": "Harold Guetzkow",
+      "aliases": [
+        "Guetzkow"
+      ],
+      "type": "figure",
+      "definition": "editor of Simulation in Social Science (1962), the early volume that covered political and economic behaviour; a graduate-school friend of Simon.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-robert-a-wilson",
+      "label": "Robert A. Wilson",
+      "aliases": [
+        "Wilson"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-frank-keil",
+      "label": "Frank Keil",
+      "aliases": [
+        "Keil"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-john-von-neumann",
+      "label": "John von Neumann",
+      "aliases": [
+        "Neumann"
+      ],
+      "type": "figure",
+      "definition": "cellular automata; a founding father of A-Life; Boden's example of a formal model that was never a running simulation.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q17455"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1903–1957"
+    },
+    {
+      "id": "c-w-ross-ashby",
+      "label": "W. Ross Ashby",
+      "aliases": [
+        "Ashby"
+      ],
+      "type": "figure",
+      "definition": "cybernetician; the third founding father of A-Life. You meet him in Boden ch. 4 on Sept 22.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1903–1972"
+    },
+    {
+      "id": "c-warren-mcculloch",
+      "label": "Warren McCulloch",
+      "aliases": [
+        "McCulloch"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1898–1969"
+    },
+    {
+      "id": "c-walter-pitts",
+      "label": "Walter Pitts",
+      "aliases": [
+        "Pitts"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1923–1969"
+    },
+    {
+      "id": "c-norbert-wiener",
+      "label": "Norbert Wiener",
+      "aliases": [
+        "Wiener"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-kenneth-craik",
+      "label": "Kenneth Craik",
+      "aliases": [
+        "Craik"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-w-grey-walter",
+      "label": "W. Grey Walter",
+      "aliases": [
+        "Walter"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-aristotle",
+      "label": "Aristotle",
+      "aliases": [],
+      "type": "figure",
+      "definition": "the earliest source Boden gives for the FAQs of the mind.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q868"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "384–322 BCE"
+    },
+    {
+      "id": "c-rene-descartes",
+      "label": "René Descartes",
+      "aliases": [
+        "Descartes"
+      ],
+      "type": "figure",
+      "definition": "discussed language-using machines in the 1630s, and so is the ancestor of the Turing test question. Also the target of the Rortyan charge that he invented \"mind\" rather than describing it — which is why anti-Cartesianism in A-Life and embodied cognition is aimed at him. You read Boden on Descartes Sept 8.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q9191"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1596–1650"
+    },
+    {
+      "id": "c-immanuel-kant",
+      "label": "Immanuel Kant",
+      "aliases": [
+        "Kant"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q9312"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1724–1804"
+    },
+    {
+      "id": "c-johann-von-goethe",
+      "label": "Johann von Goethe",
+      "aliases": [
+        "Goethe"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q5879"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1749–1832"
+    },
+    {
+      "id": "c-wilhelm-von-humboldt",
+      "label": "Wilhelm von Humboldt",
+      "aliases": [
+        "Humboldt"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1767–1835"
+    },
+    {
+      "id": "c-giambattista-vico",
+      "label": "Giambattista Vico",
+      "aliases": [
+        "Vico"
+      ],
+      "type": "figure",
+      "definition": "the verum factum tradition: you understand only what you can make. He used it to argue that only the humanities give real knowledge, since they study human creations. Boden turns the argument on its head — if you can build it, you can understand it — and makes it the deep justification for computer modelling. The single most quotable name in this reading.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1668–1744"
+    },
+    {
+      "id": "c-gottlob-frege",
+      "label": "Gottlob Frege",
+      "aliases": [
+        "Frege"
+      ],
+      "type": "figure",
+      "definition": "appears only as an adjective (\"post-Fregean\"), marking why Masterman was wary of psychologism.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q60059"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1848–1925"
+    },
+    {
+      "id": "c-richard-rorty",
+      "label": "Richard Rorty",
+      "aliases": [
+        "Rorty"
+      ],
+      "type": "figure",
+      "definition": "Philosophy and the Mirror of Nature (1979); source of the claim that \"mind\" is a Cartesian fiction that separates the individual from body, others, and environment.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1931–2007"
+    },
+    {
+      "id": "c-donna-haraway",
+      "label": "Donna Haraway",
+      "aliases": [
+        "Haraway"
+      ],
+      "type": "figure",
+      "definition": "the external critic Boden takes seriously enough to answer: the computational sciences as \"cyborg science\" and a \"reinvention of nature,\" inseparable from post-war military technology. Boden concedes the historical claim and much of the \"reinvention\" claim, and rejects the conclusion.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1944–"
+    },
+    {
+      "id": "c-herbert-butterfield",
+      "label": "Herbert Butterfield",
+      "aliases": [
+        "Butterfield"
+      ],
+      "type": "figure",
+      "definition": "cited for Whig history in §1.iii, just past the end of the assigned pages. Worth knowing the term: history written as the march toward the present.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1900–1979"
+    },
+    {
+      "id": "c-noam-chomsky",
+      "label": "Noam Chomsky",
+      "aliases": [
+        "Chomsky"
+      ],
+      "type": "figure",
+      "definition": "named as the one founding father who did not ask how motives and emotions interact with cognition; also Boden's example of formal models without simulations, and a co-author with Miller on mathematical models of language. You read Boden on him in the linguistics chapters.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {
+        "wikidata": "Q9049"
+      },
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1928–"
+    },
+    {
+      "id": "c-leon-festinger",
+      "label": "Leon Festinger",
+      "aliases": [
+        "Festinger"
+      ],
+      "type": "figure",
+      "definition": "cognitive dissonance (1957), and the 1956 study of the mid-Western doomsday cult whose faith survived the non-arrival of the spaceships. The reason the word \"cognitive\" was in the air when the field needed a name.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1919–1989"
+    },
+    {
+      "id": "c-ernest-hilgard",
+      "label": "Ernest Hilgard",
+      "aliases": [
+        "Hilgard"
+      ],
+      "type": "figure",
+      "definition": "cited (1980) on the history of the cognition / conation / affect distinction.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1904–2001"
+    },
+    {
+      "id": "c-lawrence-kubie",
+      "label": "Lawrence Kubie",
+      "aliases": [
+        "Kubie"
+      ],
+      "type": "figure",
+      "definition": "\"the cybernetic psychoanalyst\"; quoted for the holist claim that no area of psychic life can be assayed apart from the others.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1896–1973"
+    },
+    {
+      "id": "c-michael-arbib",
+      "label": "Michael Arbib",
+      "aliases": [
+        "Arbib"
+      ],
+      "type": "figure",
+      "definition": "schema theory; the schema diagram for control of the hand; the application of schema theory to religion.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1940–"
+    },
+    {
+      "id": "c-robert-abelson",
+      "label": "Robert Abelson",
+      "aliases": [
+        "Abelson"
+      ],
+      "type": "figure",
+      "definition": "the structure of belief systems; another non-formal but influential contribution.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1928–2005"
+    },
+    {
+      "id": "c-aaron-sloman",
+      "label": "Aaron Sloman",
+      "aliases": [
+        "Sloman"
+      ],
+      "type": "figure",
+      "definition": "the architecture of grief; the nursemaid model of emotion-guided action and of freedom as a feature of cognitive architecture. Boden's best case that computational psychology reaches emotion and freedom.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1936–"
+    },
+    {
+      "id": "c-sigmund-freud",
+      "label": "Sigmund Freud",
+      "aliases": [
+        "Freud"
+      ],
+      "type": "figure",
+      "definition": "mostly \"out,\" but Boden traces a line from his psychodynamics through early AI simulations of neurosis to Minsky, Dennett, Arbib, and Sloman. Her point about what a history has to exclude, and why exclusion is never clean.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1856–1939"
+    },
+    {
+      "id": "c-ulric-neisser",
+      "label": "Ulric Neisser",
+      "aliases": [
+        "Neisser"
+      ],
+      "type": "figure",
+      "definition": "coined \"cognitive psychology\" (1967) in a computational context and later rejected computational theories. Boden's example that the label does not settle membership.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1928–2012"
+    },
+    {
+      "id": "c-david-clark",
+      "label": "David Clark",
+      "aliases": [
+        "Clark"
+      ],
+      "type": "figure",
+      "definition": "cognitive therapy for anxiety disorders; cognitive, but with no reference to computational concepts, and so outside cognitive science on Boden's definition.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-n-stuart-sutherland",
+      "label": "N. Stuart Sutherland",
+      "aliases": [
+        "Sutherland"
+      ],
+      "type": "figure",
+      "definition": "the hostile voice Boden ends on: cognitive science and neuroscience as \"almost mutually exclusive,\" and the acid line that the expression exists \"mainly in order to allow workers who are not scientists to claim that they are.\" She grants the first as a rough summary and refuses the second.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1927–1998"
+    },
+    {
+      "id": "c-margaret-shotton",
+      "label": "Margaret Shotton",
+      "aliases": [
+        "Shotton"
+      ],
+      "type": "figure",
+      "definition": "cited (1989) on computer dependency, in the aside about hackers and ego strength.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-silvan-tomkins",
+      "label": "Silvan Tomkins",
+      "aliases": [
+        "Tomkins"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-samuel-messick",
+      "label": "Samuel Messick",
+      "aliases": [
+        "Messick"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-michael-apter",
+      "label": "Michael Apter",
+      "aliases": [
+        "Apter"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-daniel-bobrow",
+      "label": "Daniel Bobrow",
+      "aliases": [
+        "Bobrow"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-allan-collins",
+      "label": "Allan Collins",
+      "aliases": [
+        "Collins"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-donald-norman",
+      "label": "Donald Norman",
+      "aliases": [
+        "Norman"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-david-rumelhart",
+      "label": "David Rumelhart",
+      "aliases": [
+        "Rumelhart"
+      ],
+      "type": "figure",
+      "definition": "",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-david-marr",
+      "label": "David Marr",
+      "aliases": [
+        "Marr"
+      ],
+      "type": "figure",
+      "definition": "cited as a formal modeller rather than a simulator. You read \"Vision\" on Oct 8 as ch. 4, paired with Boden 7.iii and 7.v. [COURSE]",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1945–1980"
+    },
+    {
+      "id": "c-jerome-lettvin",
+      "label": "Jerome Lettvin",
+      "aliases": [
+        "Lettvin"
+      ],
+      "type": "figure",
+      "definition": "\"What the Frog's Eye Tells the Frog's Brain,\" Boden's evidence that computational ideas flowed into neurophysiology, not just out of it.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-seymour-papert",
+      "label": "Seymour Papert",
+      "aliases": [
+        "Papert"
+      ],
+      "type": "figure",
+      "definition": "cited (1968) for reporting Dreyfus's defeat.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1928–2016"
+    },
+    {
+      "id": "c-garry-kasparov",
+      "label": "Garry Kasparov",
+      "aliases": [
+        "Kasparov"
+      ],
+      "type": "figure",
+      "definition": "world champion beaten by IBM's Deep Blue in New York, 11 May 1997. Boden's illustration of technological AI: 200 million positions per second, exhaustive eight-move look-ahead, and biologically useless.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1963–"
+    },
+    {
+      "id": "c-margaret-masterman",
+      "label": "Margaret Masterman",
+      "aliases": [
+        "Masterman"
+      ],
+      "type": "figure",
+      "definition": "pioneer of machine translation and classification; Boden's case that the technological/psychological distinction is not clean, since Masterman's technological work was guided by intuitions about how people process language.",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor",
+      "dates": "1910–1986"
+    },
+    {
+      "id": "c-inman-harvey",
+      "label": "Inman Harvey",
+      "aliases": [
+        "Harvey"
+      ],
+      "type": "figure",
+      "definition": "quoted for the A-Life self-description: they count as cognitive scientists in so far as they build \"working artifacts that demonstrate basic cognitive abilities.\"",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-mind",
+      "label": "Mind",
+      "aliases": [
+        "the mind",
+        "minds"
+      ],
+      "type": "core-concept",
+      "definition": "The thing mind design tries to understand in terms of its design. Root concept of the course map.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-rules",
+      "label": "Rules",
+      "aliases": [
+        "formal rules",
+        "rule"
+      ],
+      "type": "core-concept",
+      "definition": "The formal rules of a token manipulation system: they specify only the next arrangement and only in terms of the current one.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-tokens",
+      "label": "Tokens",
+      "aliases": [
+        "formal token",
+        "formal tokens",
+        "token"
+      ],
+      "type": "core-concept",
+      "definition": "The items a formal system manipulates. Chess pieces and go stones are mere formal tokens; numerals are symbols.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-neural-networks",
+      "label": "Neural networks",
+      "aliases": [
+        "NN",
+        "neural nets",
+        "ANN",
+        "artificial neural networks",
+        "neural network"
+      ],
+      "type": "system-or-example",
+      "definition": "Networks of many simple, richly interconnected units with activation levels and connection weights; the systems connectionism builds.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "connectionist",
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-chatgpt",
+      "label": "ChatGPT",
+      "aliases": [
+        "GPT",
+        "large language model",
+        "LLM"
+      ],
+      "type": "system-or-example",
+      "definition": "A present-day large language model; the class's running example of a system implemented by neural networks.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-roomba",
+      "label": "Roomba",
+      "aliases": [
+        "robot vacuum"
+      ],
+      "type": "system-or-example",
+      "definition": "A robot vacuum cleaner; the class's example of embodied and embedded AI.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-chess",
+      "label": "Chess",
+      "aliases": [
+        "chess machine"
+      ],
+      "type": "system-or-example",
+      "definition": "Haugeland's example of a formal system: token manipulation, digital, medium independent.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-baseball",
+      "label": "Baseball",
+      "aliases": [],
+      "type": "system-or-example",
+      "definition": "Haugeland's example of a game that is not a formal system.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-the-penny-on-the-checkerboard",
+      "label": "The penny on the checkerboard",
+      "aliases": [
+        "penny on the checkerboard"
+      ],
+      "type": "system-or-example",
+      "definition": "Haugeland's illustration of digital versus analog re-identification.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-computational-neuroscience",
+      "label": "Computational neuroscience",
+      "aliases": [],
+      "type": "research-paradigm",
+      "definition": "The computational modelling of the brain; the course's fifth period tag.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "computational-neuroscience"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-symbol",
+      "label": "Symbol",
+      "aliases": [
+        "symbols"
+      ],
+      "type": "core-concept",
+      "definition": "A token that means something (numerals, arithmetic signs), as opposed to a mere formal token.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-1"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-behaviourism",
+      "label": "Behaviourism",
+      "aliases": [
+        "behaviorism"
+      ],
+      "type": "research-paradigm",
+      "definition": "The approach cognitive science named itself against; significant chiefly as something reacted against.",
+      "sources": [],
+      "external_ids": {},
+      "tags": [
+        "reading-2"
+      ],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-text-haugeland-2023",
+      "label": "Haugeland, \"What Is Mind Design?\"",
+      "aliases": [
+        "haugeland-2023"
+      ],
+      "type": "text",
+      "definition": "Mind Design III, ch. 2",
+      "sources": [
+        {
+          "source_id": "haugeland-2023"
+        }
+      ],
+      "external_ids": {},
+      "tags": [],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    },
+    {
+      "id": "c-text-boden-2006-ch1",
+      "label": "Boden, \"Setting the Scene; The Scope of Cognitive Science\"",
+      "aliases": [
+        "boden-2006-ch1"
+      ],
+      "type": "text",
+      "definition": "Mind as Machine, ch. 1.i-1.ii",
+      "sources": [
+        {
+          "source_id": "boden-2006-ch1"
+        }
+      ],
+      "external_ids": {},
+      "tags": [],
+      "pack_id": "phil2400-f26",
+      "created_at": "2026-09-11T08:00:00Z",
+      "created_by": "instructor"
+    }
+  ],
+  "relations": [
+    {
+      "id": "is-a-kind-of",
+      "label": "is a kind of",
+      "inverse_label": "has as a kind",
+      "family": "taxonomic",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": true,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "hierarchy_weight": -1,
+      "description": "Subject is a subtype of object. Chains: a robin is a kind of bird, a bird is a kind of animal, so a robin is a kind of animal.",
+      "examples": []
+    },
+    {
+      "id": "is-an-instance-of",
+      "label": "is an instance of",
+      "inverse_label": "has as an instance",
+      "family": "taxonomic",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "system-or-example"
+      ],
+      "object_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "hierarchy_weight": -1,
+      "description": "Subject is a particular thing falling under the object concept.",
+      "examples": []
+    },
+    {
+      "id": "is-part-of",
+      "label": "is part of",
+      "inverse_label": "has as a part",
+      "family": "compositional",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": true,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": -1,
+      "description": "Subject is a component of object.",
+      "examples": []
+    },
+    {
+      "id": "is-constituted-by",
+      "label": "is constituted by",
+      "inverse_label": "constitutes",
+      "family": "compositional",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Object is what the subject is made of or requires: mind is constituted by intentionality.",
+      "examples": []
+    },
+    {
+      "id": "is-defined-as",
+      "label": "is defined as",
+      "inverse_label": "defines",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Object gives the definition of subject.",
+      "examples": []
+    },
+    {
+      "id": "is-explained-by",
+      "label": "is explained by",
+      "inverse_label": "explains",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Object is the account that explains subject: intentionality is explained by the intentional stance.",
+      "examples": []
+    },
+    {
+      "id": "is-implemented-by",
+      "label": "is implemented by",
+      "inverse_label": "implements",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Object realizes or runs subject: neural networks are implemented by ChatGPT (as the class put it).",
+      "examples": []
+    },
+    {
+      "id": "presupposes",
+      "label": "presupposes",
+      "inverse_label": "is presupposed by",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": true,
+      "inverse_of": null,
+      "incompatible_with": [
+        "presupposes-the-falsity-of"
+      ],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject cannot be true or in place unless object is.",
+      "examples": []
+    },
+    {
+      "id": "causes",
+      "label": "causes",
+      "inverse_label": "is caused by",
+      "family": "causal",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject brings about object.",
+      "examples": []
+    },
+    {
+      "id": "enables",
+      "label": "enables",
+      "inverse_label": "is enabled by",
+      "family": "causal",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "prevents"
+      ],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject makes object possible.",
+      "examples": []
+    },
+    {
+      "id": "prevents",
+      "label": "prevents",
+      "inverse_label": "is prevented by",
+      "family": "causal",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "enables"
+      ],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject rules object out.",
+      "examples": []
+    },
+    {
+      "id": "developed-from",
+      "label": "developed from",
+      "inverse_label": "gave rise to",
+      "family": "historical",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": true,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm",
+        "system-or-example"
+      ],
+      "object_types": [
+        "core-concept",
+        "research-paradigm",
+        "system-or-example"
+      ],
+      "hierarchy_weight": 0,
+      "description": "Subject grew historically out of object. Read backwards: object gave rise to subject.",
+      "examples": []
+    },
+    {
+      "id": "replaced",
+      "label": "replaced",
+      "inverse_label": "was replaced by",
+      "family": "historical",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "research-paradigm"
+      ],
+      "object_types": [
+        "research-paradigm"
+      ],
+      "hierarchy_weight": 0,
+      "description": "Subject took over from object as the reigning approach.",
+      "examples": []
+    },
+    {
+      "id": "reinterpreted",
+      "label": "reinterpreted",
+      "inverse_label": "was reinterpreted by",
+      "family": "historical",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject gave a new reading of object.",
+      "examples": []
+    },
+    {
+      "id": "narrowed",
+      "label": "narrowed",
+      "inverse_label": "was narrowed by",
+      "family": "historical",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "broadened"
+      ],
+      "subject_types": [
+        "core-concept"
+      ],
+      "object_types": [
+        "core-concept"
+      ],
+      "hierarchy_weight": 0,
+      "description": "Subject made the meaning of object more restrictive.",
+      "examples": []
+    },
+    {
+      "id": "broadened",
+      "label": "broadened",
+      "inverse_label": "was broadened by",
+      "family": "historical",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "narrowed"
+      ],
+      "subject_types": [
+        "core-concept"
+      ],
+      "object_types": [
+        "core-concept"
+      ],
+      "hierarchy_weight": 0,
+      "description": "Subject made the meaning of object more inclusive.",
+      "examples": []
+    },
+    {
+      "id": "supports",
+      "label": "supports",
+      "inverse_label": "is supported by",
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "undermines",
+        "refutes"
+      ],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject is evidence or argument for object.",
+      "examples": []
+    },
+    {
+      "id": "undermines",
+      "label": "undermines",
+      "inverse_label": "is undermined by",
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "supports"
+      ],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject weakens object without refuting it.",
+      "examples": []
+    },
+    {
+      "id": "refutes",
+      "label": "refutes",
+      "inverse_label": "is refuted by",
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "supports"
+      ],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject shows object false.",
+      "examples": []
+    },
+    {
+      "id": "objects-to",
+      "label": "objects to",
+      "inverse_label": "is objected to by",
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject raises an objection against object.",
+      "examples": []
+    },
+    {
+      "id": "responds-to",
+      "label": "responds to",
+      "inverse_label": "is responded to by",
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject answers object.",
+      "examples": []
+    },
+    {
+      "id": "presupposes-the-falsity-of",
+      "label": "presupposes the falsity of",
+      "inverse_label": null,
+      "family": "dialectical",
+      "genres": [
+        "concept",
+        "argument"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [
+        "presupposes"
+      ],
+      "subject_types": [
+        "core-concept"
+      ],
+      "object_types": [
+        "core-concept"
+      ],
+      "hierarchy_weight": 0,
+      "description": "Subject can only be true if object is false.",
+      "examples": []
+    },
+    {
+      "id": "was-proposed-by",
+      "label": "was proposed by",
+      "inverse_label": "proposed",
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [
+        "figure"
+      ],
+      "hierarchy_weight": 1,
+      "description": "Object is the person who put subject forward.",
+      "examples": []
+    },
+    {
+      "id": "was-invented-by",
+      "label": "was invented by",
+      "inverse_label": "invented",
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [
+        "figure"
+      ],
+      "hierarchy_weight": 1,
+      "description": "Object is the person who created subject.",
+      "examples": []
+    },
+    {
+      "id": "is-attributed-to",
+      "label": "is attributed to",
+      "inverse_label": null,
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Object is credited with subject.",
+      "examples": []
+    },
+    {
+      "id": "is-discussed-in",
+      "label": "is discussed in",
+      "inverse_label": "discusses",
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [
+        "text"
+      ],
+      "hierarchy_weight": 1,
+      "description": "Object is a text in which subject is treated.",
+      "examples": []
+    },
+    {
+      "id": "is-an-example-of",
+      "label": "is an example of",
+      "inverse_label": "has as an example",
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "system-or-example"
+      ],
+      "object_types": [
+        "core-concept",
+        "research-paradigm"
+      ],
+      "hierarchy_weight": -1,
+      "description": "Subject illustrates object.",
+      "examples": []
+    },
+    {
+      "id": "is-related-to",
+      "label": "is related to",
+      "inverse_label": null,
+      "family": "associative",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": false,
+      "symmetric": true,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Weak catch-all. Counts for nothing structurally; replace it with something more specific when you can.",
+      "examples": []
+    },
+    {
+      "id": "sees-greatest-hope-in",
+      "label": "sees greatest hope in",
+      "inverse_label": null,
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "research-paradigm"
+      ],
+      "object_types": [
+        "system-or-example",
+        "research-paradigm"
+      ],
+      "hierarchy_weight": 0,
+      "description": "A research program's bet on which kind of system will succeed.",
+      "examples": []
+    },
+    {
+      "id": "sees-anti-representational-leaning-in",
+      "label": "sees anti-representational leaning in",
+      "inverse_label": null,
+      "family": "attributive",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [
+        "research-paradigm"
+      ],
+      "object_types": [
+        "research-paradigm"
+      ],
+      "hierarchy_weight": 0,
+      "description": "A research program's reading of another as turning away from internal representation.",
+      "examples": []
+    },
+    {
+      "id": "is-applicable-to",
+      "label": "is applicable to",
+      "inverse_label": "admits",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 0,
+      "description": "Subject (a stance, method, or test) can be brought to bear on object.",
+      "examples": []
+    },
+    {
+      "id": "operates-on",
+      "label": "operates on",
+      "inverse_label": "is operated on by",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Subject works on or manipulates object: rules operate on tokens.",
+      "examples": []
+    },
+    {
+      "id": "centrally-concerns",
+      "label": "centrally concerns",
+      "inverse_label": "is the central concern of",
+      "family": "explanatory",
+      "genres": [
+        "concept",
+        "mind"
+      ],
+      "directed": true,
+      "symmetric": false,
+      "transitive": false,
+      "inverse_of": null,
+      "incompatible_with": [],
+      "subject_types": [],
+      "object_types": [],
+      "hierarchy_weight": 1,
+      "description": "Object is the main topic of subject.",
+      "examples": []
+    }
+  ],
+  "alias_table": {
+    "relations": {
+      "required / primary": "is-constituted-by",
+      "required": "is-constituted-by",
+      "primary": "is-constituted-by",
+      "explained by": "is-explained-by",
+      "allows for": "enables",
+      "applies to": "is-applicable-to",
+      "powers": "implements",
+      "constituted by": "is-constituted-by",
+      "for manipulating": "operates-on",
+      "is for manipulating": "operates-on",
+      "built up by": "gave-rise-to",
+      "was built off": "developed-from",
+      "mostly focused on": "centrally-concerns",
+      "invented by": "was-invented-by",
+      "paradigm shifted": "gave-rise-to",
+      "is the present-day example of": "is-an-example-of",
+      "is a type of": "is-a-kind-of",
+      "is a": "is-a-kind-of",
+      "example of": "is-an-example-of",
+      "led to": "gave-rise-to",
+      "caused the rise of": "gave-rise-to"
+    },
+    "concepts": {}
+  },
+  "inference": {
+    "inheritable_relations": [
+      "is-an-instance-of",
+      "is-an-example-of"
+    ],
+    "inherit_along": "is-a-kind-of",
+    "structure_thresholds": {
+      "spoke": 0.5,
+      "chain": 0.5,
+      "network_min_cross_links": 1
+    }
+  },
+  "sources": [
+    {
+      "id": "haugeland-2023",
+      "kind": "chapter",
+      "title": "What Is Mind Design?",
+      "authors": [
+        "John Haugeland"
+      ],
+      "container": "Mind Design III, ch. 2",
+      "year": 2023,
+      "pages": "11-34"
+    },
+    {
+      "id": "boden-2006-ch1",
+      "kind": "chapter",
+      "title": "Setting the Scene; The Scope of Cognitive Science",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 1.i-1.ii",
+      "year": 2006,
+      "pages": "1-18"
+    },
+    {
+      "id": "boden-2006-ch2",
+      "kind": "chapter",
+      "title": "Descartes; Vaucanson; the neurophysiological machine",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 2.ii, 2.iv, 2.viii",
+      "year": 2006
+    },
+    {
+      "id": "boden-2006-ch3",
+      "kind": "chapter",
+      "title": "Babbage's analytical engines",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 3.iii, 3.iv, 3.vi",
+      "year": 2006
+    },
+    {
+      "id": "turing-1950",
+      "kind": "chapter",
+      "title": "Computing Machinery and Intelligence",
+      "authors": [
+        "Alan Turing"
+      ],
+      "container": "Mind Design III, ch. 6",
+      "year": 1950
+    },
+    {
+      "id": "boden-2006-ch4a",
+      "kind": "chapter",
+      "title": "Turing; McCulloch-Pitts; the logical neurone",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 4.i-4.iv",
+      "year": 2006
+    },
+    {
+      "id": "boden-2006-ch4b",
+      "kind": "chapter",
+      "title": "Cybernetics; Craik; Walter; Ashby",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 4.v-4.ix",
+      "year": 2006
+    },
+    {
+      "id": "maley-2023",
+      "kind": "chapter",
+      "title": "The Analog Alternative",
+      "authors": [
+        "Corey Maley"
+      ],
+      "container": "Mind Design III, ch. 5",
+      "year": 2023
+    },
+    {
+      "id": "boden-2006-ch6",
+      "kind": "chapter",
+      "title": "The cognitive revolution",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 6.i-6.iii",
+      "year": 2006
+    },
+    {
+      "id": "newell-simon-1976",
+      "kind": "chapter",
+      "title": "Computer Science as Empirical Inquiry",
+      "authors": [
+        "Allen Newell",
+        "Herbert Simon"
+      ],
+      "container": "Mind Design III, ch. 3",
+      "year": 1976
+    },
+    {
+      "id": "boden-2006-ch10",
+      "kind": "chapter",
+      "title": "When GOFAI was NewFAI (selections)",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 10",
+      "year": 2006
+    },
+    {
+      "id": "boden-2006-ch11",
+      "kind": "chapter",
+      "title": "Of Bombs and Bombshells (selections)",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 11",
+      "year": 2006
+    },
+    {
+      "id": "marr-1982",
+      "kind": "chapter",
+      "title": "Vision",
+      "authors": [
+        "David Marr"
+      ],
+      "container": "Mind Design III, ch. 4",
+      "year": 1982
+    },
+    {
+      "id": "boden-2006-ch7a",
+      "kind": "chapter",
+      "title": "Three levels, two types; visions of vision",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 7.iii, 7.v",
+      "year": 2006
+    },
+    {
+      "id": "searle-1980",
+      "kind": "chapter",
+      "title": "Minds, Brains, and Programs",
+      "authors": [
+        "John Searle"
+      ],
+      "container": "Mind Design III, ch. 12",
+      "year": 1980
+    },
+    {
+      "id": "boden-2006-ch16c",
+      "kind": "chapter",
+      "title": "That room in China",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 16.v.c",
+      "year": 2006
+    },
+    {
+      "id": "boden-1988",
+      "kind": "chapter",
+      "title": "Escaping from the Chinese Room",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind Design III, ch. 13",
+      "year": 1988
+    },
+    {
+      "id": "boden-2006-ch16b",
+      "kind": "chapter",
+      "title": "Three variations on a theme",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 16.iv",
+      "year": 2006
+    },
+    {
+      "id": "dennett-1981",
+      "kind": "chapter",
+      "title": "True Believers",
+      "authors": [
+        "Daniel Dennett"
+      ],
+      "container": "Mind Design III, ch. 11",
+      "year": 1981
+    },
+    {
+      "id": "russell-2023",
+      "kind": "chapter",
+      "title": "Rationality and Intelligence",
+      "authors": [
+        "Stuart Russell"
+      ],
+      "container": "Mind Design III, ch. 8",
+      "year": 2023
+    },
+    {
+      "id": "boden-2006-ch7b",
+      "kind": "chapter",
+      "title": "Reasoning and rationality",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 7.iv",
+      "year": 2006
+    },
+    {
+      "id": "fodor-1983",
+      "kind": "chapter",
+      "title": "Central Systems",
+      "authors": [
+        "Jerry Fodor"
+      ],
+      "container": "Mind Design III, ch. 9",
+      "year": 1983
+    },
+    {
+      "id": "boden-2006-ch7c",
+      "kind": "chapter",
+      "title": "Nativism and its vicissitudes",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 7.vi",
+      "year": 2006
+    },
+    {
+      "id": "rumelhart-1989",
+      "kind": "chapter",
+      "title": "The Architecture of Mind: A Connectionist Approach",
+      "authors": [
+        "David Rumelhart"
+      ],
+      "container": "Mind Design III, ch. 19",
+      "year": 1989
+    },
+    {
+      "id": "boden-2006-ch12",
+      "kind": "chapter",
+      "title": "Connectionism: birth and renaissance",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 12.i, 12.viii",
+      "year": 2006
+    },
+    {
+      "id": "churchland-sejnowski-1990",
+      "kind": "chapter",
+      "title": "The Computational Brain",
+      "authors": [
+        "Patricia Churchland",
+        "Terrence Sejnowski"
+      ],
+      "container": "Mind Design III, ch. 20",
+      "year": 1990
+    },
+    {
+      "id": "boden-2006-ch14",
+      "kind": "chapter",
+      "title": "Computational neuroscience; Cartesian correlations",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 14.i, 14.x",
+      "year": 2006
+    },
+    {
+      "id": "haugeland-1995",
+      "kind": "chapter",
+      "title": "Mind Embodied and Embedded",
+      "authors": [
+        "John Haugeland"
+      ],
+      "container": "Mind Design III, ch. 22",
+      "year": 1995
+    },
+    {
+      "id": "brooks-1991",
+      "kind": "chapter",
+      "title": "Intelligence without Representation",
+      "authors": [
+        "Rodney Brooks"
+      ],
+      "container": "Mind Design III, ch. 23",
+      "year": 1991
+    },
+    {
+      "id": "boden-2006-ch15",
+      "kind": "chapter",
+      "title": "Vehicles to lampreys",
+      "authors": [
+        "Margaret Boden"
+      ],
+      "container": "Mind as Machine, ch. 15.vii",
+      "year": 2006
+    },
+    {
+      "id": "webb-2023",
+      "kind": "chapter",
+      "title": "What Does Biorobotics Offer Philosophy?",
+      "authors": [
+        "Barbara Webb"
+      ],
+      "container": "Mind Design III, ch. 24",
+      "year": 2023
+    }
+  ],
+  "units": [
+    {
+      "id": "u01",
+      "week": 1,
+      "date": "2026-09-01",
+      "title": "Course intro; Haugeland, What Is Mind Design?",
+      "sources": [
+        "haugeland-2023"
+      ],
+      "concepts_introduced": [
+        "c-mind-design",
+        "c-psychology-by-reverse-engineering",
+        "c-materialism-minimal-sense",
+        "c-perspective",
+        "c-turing-test",
+        "c-what-the-test-ignores",
+        "c-intentionality",
+        "c-intentional-object",
+        "c-holism",
+        "c-interpretation",
+        "c-rationality-is-the-mother-of-intention",
+        "c-intentional-stance",
+        "c-intentional-system",
+        "c-original-vs-derivative-intentionality",
+        "c-formal-system",
+        "c-token-manipulation-system",
+        "c-digital",
+        "c-medium-independence",
+        "c-automatic-formal-system",
+        "c-implementation",
+        "c-universal-machine",
+        "c-algorithm",
+        "c-heuristic",
+        "c-digital-simulation",
+        "c-turing-s-prediction",
+        "c-gofai",
+        "c-symbol-vs-formal-token",
+        "c-interpreted-formal-system",
+        "c-semantic-interpretation",
+        "c-intentional-interpretation",
+        "c-intelligence-by-explicit-reasoning",
+        "c-search-and-heuristics-vs-knowledge-representation",
+        "c-gofai-s-disappointments",
+        "c-nfai",
+        "c-connectionism",
+        "c-pattern-processing",
+        "c-the-brain-analogy-and-its-limits",
+        "c-the-syntactic-gap",
+        "c-symbolic-implementation-as-pyrrhic-victory",
+        "c-embodied-and-embedded-ai",
+        "c-understanding",
+        "c-proto-concept",
+        "c-the-three-conditions-on-understanding",
+        "c-john-haugeland",
+        "c-carl-f-craver",
+        "c-colin-klein",
+        "c-alan-turing",
+        "c-franz-brentano",
+        "c-daniel-dennett",
+        "c-john-searle",
+        "c-w-v-o-quine",
+        "c-allen-newell",
+        "c-herbert-simon",
+        "c-marvin-minsky",
+        "c-hubert-dreyfus",
+        "c-mind",
+        "c-rules",
+        "c-tokens",
+        "c-neural-networks",
+        "c-chess",
+        "c-baseball",
+        "c-the-penny-on-the-checkerboard",
+        "c-symbol"
+      ],
+      "period_tag": null,
+      "expert_map": "map-sept2-expert"
+    },
+    {
+      "id": "u02",
+      "week": 1,
+      "date": "2026-09-03",
+      "title": "Boden: Setting the scene; scope of cognitive science",
+      "sources": [
+        "boden-2006-ch1"
+      ],
+      "concepts_introduced": [
+        "c-the-four-clusters-of-questions",
+        "c-artificial-intelligence",
+        "c-cybernetics",
+        "c-why-computational-concepts-help",
+        "c-universal-grammar",
+        "c-chinese-room",
+        "c-passing-the-turing-test",
+        "c-zombie",
+        "c-what-a-5-year-old-robot-would-require",
+        "c-emotion-motivation-and-freedom-as-computational-topics",
+        "c-biological-tricks-hardwired-mechanisms",
+        "c-self-organization",
+        "c-cyborg-science",
+        "c-verum-factum",
+        "c-cognitive-science-is-catholic",
+        "c-cognition-conation-affect",
+        "c-cognitive-science",
+        "c-two-footpaths",
+        "c-member-disciplines",
+        "c-interdisciplinarity-vs-multidisciplinarity",
+        "c-computational-concepts-using-computers-building-models",
+        "c-turing-s-definition-of-computation",
+        "c-dynamical-systems",
+        "c-a-life",
+        "c-technological-vs-psychological-or-biological-ai",
+        "c-deep-blue",
+        "c-knowledge-engineering",
+        "c-software-vs-hardware",
+        "c-evolutionary-psychology",
+        "c-philosophical-fault-lines",
+        "c-margaret-boden",
+        "c-george-a-miller",
+        "c-jerome-bruner",
+        "c-nelson-goodman",
+        "c-christopher-longuet-higgins",
+        "c-ernest-lepore",
+        "c-zenon-pylyshyn",
+        "c-michael-wheeler",
+        "c-harold-guetzkow",
+        "c-robert-a-wilson",
+        "c-frank-keil",
+        "c-john-von-neumann",
+        "c-w-ross-ashby",
+        "c-warren-mcculloch",
+        "c-walter-pitts",
+        "c-norbert-wiener",
+        "c-kenneth-craik",
+        "c-w-grey-walter",
+        "c-aristotle",
+        "c-rene-descartes",
+        "c-immanuel-kant",
+        "c-johann-von-goethe",
+        "c-wilhelm-von-humboldt",
+        "c-giambattista-vico",
+        "c-gottlob-frege",
+        "c-richard-rorty",
+        "c-donna-haraway",
+        "c-herbert-butterfield",
+        "c-noam-chomsky",
+        "c-leon-festinger",
+        "c-ernest-hilgard",
+        "c-lawrence-kubie",
+        "c-michael-arbib",
+        "c-robert-abelson",
+        "c-aaron-sloman",
+        "c-sigmund-freud",
+        "c-ulric-neisser",
+        "c-david-clark",
+        "c-n-stuart-sutherland",
+        "c-margaret-shotton",
+        "c-silvan-tomkins",
+        "c-samuel-messick",
+        "c-michael-apter",
+        "c-daniel-bobrow",
+        "c-allan-collins",
+        "c-donald-norman",
+        "c-david-rumelhart",
+        "c-david-marr",
+        "c-jerome-lettvin",
+        "c-seymour-papert",
+        "c-garry-kasparov",
+        "c-margaret-masterman",
+        "c-inman-harvey",
+        "c-behaviourism"
+      ],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u03",
+      "week": 2,
+      "date": "2026-09-08",
+      "title": "Boden: Descartes; Vaucanson; the neurophysiological machine",
+      "sources": [
+        "boden-2006-ch2"
+      ],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u04",
+      "week": 2,
+      "date": "2026-09-10",
+      "title": "Boden: Babbage's analytical engines",
+      "sources": [
+        "boden-2006-ch3"
+      ],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u05",
+      "week": 3,
+      "date": "2026-09-15",
+      "title": "Turing, Computing Machinery and Intelligence",
+      "sources": [
+        "turing-1950"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u06",
+      "week": 3,
+      "date": "2026-09-17",
+      "title": "Boden: Turing; McCulloch-Pitts; the logical neurone",
+      "sources": [
+        "boden-2006-ch4a"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "cybernetic",
+      "expert_map": null
+    },
+    {
+      "id": "u07",
+      "week": 4,
+      "date": "2026-09-22",
+      "title": "Boden: cybernetics; Craik; Walter; Ashby",
+      "sources": [
+        "boden-2006-ch4b"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "cybernetic",
+      "expert_map": null
+    },
+    {
+      "id": "u08",
+      "week": 4,
+      "date": "2026-09-24",
+      "title": "Maley, The Analog Alternative",
+      "sources": [
+        "maley-2023"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "cybernetic",
+      "expert_map": null
+    },
+    {
+      "id": "u09",
+      "week": 5,
+      "date": "2026-09-29",
+      "title": "Boden: the cognitive revolution",
+      "sources": [
+        "boden-2006-ch6"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u10",
+      "week": 5,
+      "date": "2026-10-01",
+      "title": "Newell and Simon; Boden: When GOFAI was NewFAI",
+      "sources": [
+        "newell-simon-1976",
+        "boden-2006-ch10"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u11",
+      "week": 6,
+      "date": "2026-10-06",
+      "title": "Boden: AI winter, Of Bombs and Bombshells",
+      "sources": [
+        "boden-2006-ch11"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u12",
+      "week": 6,
+      "date": "2026-10-08",
+      "title": "Marr, Vision; Boden: three levels, two types",
+      "sources": [
+        "marr-1982",
+        "boden-2006-ch7a"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u13",
+      "week": 7,
+      "date": "2026-10-15",
+      "title": "Searle, Minds, Brains, and Programs; Boden: that room in China",
+      "sources": [
+        "searle-1980",
+        "boden-2006-ch16c"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u14",
+      "week": 8,
+      "date": "2026-10-20",
+      "title": "Boden, Escaping from the Chinese Room; three variations",
+      "sources": [
+        "boden-1988",
+        "boden-2006-ch16b"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u15",
+      "week": 8,
+      "date": "2026-10-22",
+      "title": "Dennett, True Believers",
+      "sources": [
+        "dennett-1981"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u16",
+      "week": 9,
+      "date": "2026-10-27",
+      "title": "Russell, Rationality and Intelligence; Boden: reasoning and rationality",
+      "sources": [
+        "russell-2023",
+        "boden-2006-ch7b"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u17",
+      "week": 9,
+      "date": "2026-10-29",
+      "title": "Fodor, Central Systems; Boden: nativism",
+      "sources": [
+        "fodor-1983",
+        "boden-2006-ch7c"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "gofai",
+      "expert_map": null
+    },
+    {
+      "id": "u18",
+      "week": 10,
+      "date": "2026-11-03",
+      "title": "Rumelhart, The Architecture of Mind; Boden: connectionism",
+      "sources": [
+        "rumelhart-1989",
+        "boden-2006-ch12"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "connectionist",
+      "expert_map": null
+    },
+    {
+      "id": "u19",
+      "week": 10,
+      "date": "2026-11-05",
+      "title": "Churchland and Sejnowski, The Computational Brain; Boden: computational neuroscience",
+      "sources": [
+        "churchland-sejnowski-1990",
+        "boden-2006-ch14"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "computational-neuroscience",
+      "expert_map": null
+    },
+    {
+      "id": "u20",
+      "week": 11,
+      "date": "2026-11-10",
+      "title": "Haugeland, Mind Embodied and Embedded",
+      "sources": [
+        "haugeland-1995"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "embodied",
+      "expert_map": null
+    },
+    {
+      "id": "u21",
+      "week": 11,
+      "date": "2026-11-12",
+      "title": "Brooks, Intelligence without Representation; Boden: vehicles to lampreys",
+      "sources": [
+        "brooks-1991",
+        "boden-2006-ch15"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "embodied",
+      "expert_map": null
+    },
+    {
+      "id": "u22",
+      "week": 12,
+      "date": "2026-11-17",
+      "title": "Webb, What Does Biorobotics Offer Philosophy?",
+      "sources": [
+        "webb-2023"
+      ],
+      "concepts_introduced": [],
+      "period_tag": "embodied",
+      "expert_map": null
+    },
+    {
+      "id": "u23",
+      "week": 12,
+      "date": "2026-11-19",
+      "title": "Take-stock and open-weeks planning",
+      "sources": [],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u24",
+      "week": 13,
+      "date": "2026-12-01",
+      "title": "OPEN: class choice",
+      "sources": [],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u25",
+      "week": 13,
+      "date": "2026-12-03",
+      "title": "OPEN: class choice",
+      "sources": [],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u26",
+      "week": 14,
+      "date": "2026-12-08",
+      "title": "OPEN: class choice",
+      "sources": [],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    },
+    {
+      "id": "u27",
+      "week": 14,
+      "date": "2026-12-10",
+      "title": "OPEN: class choice",
+      "sources": [],
+      "concepts_introduced": [],
+      "period_tag": null,
+      "expert_map": null
+    }
+  ],
+  "expert_maps": [
+    {
+      "id": "map-sept2-expert",
+      "file": "maps/sept2-expert.map.json",
+      "unit": "u01",
+      "visibility": "after_submission"
+    }
+  ],
+  "constraint_presets": [
+    {
+      "id": "map-1",
+      "title": "Map 1 (early term)",
+      "directedness": "D2",
+      "genre": "concept",
+      "rules": [
+        {
+          "kind": "min_concepts",
+          "value": 10
+        },
+        {
+          "kind": "min_relations_per_concept",
+          "value": 1
+        },
+        {
+          "kind": "all_relations_labeled",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "map-2",
+      "title": "Map 2 (midterm)",
+      "directedness": "D2",
+      "genre": "concept",
+      "rules": [
+        {
+          "kind": "min_concepts",
+          "value": 15
+        },
+        {
+          "kind": "min_unique_relations_per_concept",
+          "value": 2
+        },
+        {
+          "kind": "min_cross_links",
+          "value": 2
+        },
+        {
+          "kind": "justification_required_on_cross_links",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "map-3",
+      "title": "Map 3 (synthesis, open weeks)",
+      "directedness": "D1",
+      "genre": "concept",
+      "revises": "diagnostic-map",
+      "rules": [
+        {
+          "kind": "min_new_concepts_vs_baseline",
+          "value": 8
+        },
+        {
+          "kind": "min_new_cross_links_between_previously_unconnected_regions",
+          "value": 3
+        },
+        {
+          "kind": "min_anchored_propositions",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "chinese-room-argument",
+      "title": "Argument map: the Chinese Room exchange (weeks 7-8)",
+      "directedness": "D2",
+      "genre": "argument",
+      "rules": [
+        {
+          "kind": "root_fixed",
+          "value": "c-chinese-room"
+        },
+        {
+          "kind": "min_objections",
+          "value": 3
+        },
+        {
+          "kind": "replies_required",
+          "value": [
+            "Searle",
+            "Boden"
+          ]
+        },
+        {
+          "kind": "all_relations_in_family",
+          "value": "dialectical"
+        }
+      ]
+    }
+  ],
+  "rubric_templates": [
+    {
+      "id": "concept-map-rubric",
+      "applies_to": [
+        "map-1",
+        "map-2"
+      ],
+      "criteria": [
+        {
+          "id": "content-accuracy",
+          "label": "Content accuracy",
+          "levels": 4
+        },
+        {
+          "id": "structure",
+          "label": "Structural sophistication (network rather than spoke or chain; justified cross-links)",
+          "levels": 4
+        },
+        {
+          "id": "justifications",
+          "label": "Quality of justifications",
+          "levels": 4
+        }
+      ]
+    },
+    {
+      "id": "argument-map-rubric",
+      "applies_to": [
+        "chinese-room-argument"
+      ],
+      "criteria": [
+        {
+          "id": "content-accuracy",
+          "label": "Content accuracy",
+          "levels": 4
+        },
+        {
+          "id": "dialectical-relations",
+          "label": "Accurate dialectical relations",
+          "levels": 4
+        },
+        {
+          "id": "bottoms-out",
+          "label": "Identifies where the dispute bottoms out",
+          "levels": 4
+        }
+      ]
+    },
+    {
+      "id": "synthesis-map-rubric",
+      "applies_to": [
+        "map-3"
+      ],
+      "criteria": [
+        {
+          "id": "content-accuracy",
+          "label": "Content accuracy",
+          "levels": 4
+        },
+        {
+          "id": "structure",
+          "label": "Structural sophistication",
+          "levels": 4
+        },
+        {
+          "id": "change",
+          "label": "Demonstrated change from the week-one baseline",
+          "levels": 4
+        },
+        {
+          "id": "justifications",
+          "label": "Quality of justifications",
+          "levels": 4
+        }
+      ]
+    }
+  ],
+  "flashcard_policy": {
+    "source": "learner_map",
+    "blank": [
+      "object",
+      "subject",
+      "relation"
+    ],
+    "distractors": "same_type_same_unit",
+    "boxes": [
+      1,
+      3,
+      7,
+      14,
+      30
+    ]
+  }
+}

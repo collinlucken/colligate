@@ -1,0 +1,17 @@
+# Demo student map for the Replit session.
+# Built to trigger every engine feature on cue: three shared propositions with the
+# instructor's map, a transitive chain that implies "Roomba is an instance of Mind",
+# one enables/prevents conflict, one type violation, and two disputes with the expert map.
+? What is mind design?
+Mind -> is constituted by -> Intentionality  @5  [haugeland-2023 14]
+Intentionality -> is explained by -> Intentional Stance  @4
+Intentional Stance -> was invented by -> Dennett  @5  [haugeland-2023 15]
+NFAI -> is a kind of -> Mind  @2
+Embodied AI -> is a kind of -> NFAI  @4  [haugeland-2023 31]
+Roomba -> is an instance of -> Embodied AI  @5
+GOFAI -> is a kind of -> Mind  @3
+GOFAI -> is constituted by -> Formal System  @4  [haugeland-2023 23]
+Formal System -> is constituted by -> Rules  @5  [haugeland-2023 17]
+GOFAI -> enables -> Understanding  @2
+GOFAI -> prevents -> Understanding  @3  [haugeland-2023 33]  // Haugeland's closing thesis
+Turing test -> was invented by -> GOFAI  @1

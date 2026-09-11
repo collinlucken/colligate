@@ -1,0 +1,18 @@
+# Instructor's whiteboard map, PHIL 2400, September 2, 2026
+# Transcribed in the Vision and Architecture Brief, section 5.7.
+# Relations marked * were free text on the whiteboard; the pack's alias table now resolves them.
+? What is mind design?
+Mind -> is constituted by -> Intentionality  @5  [haugeland-2023 14]
+Intentionality -> is explained by -> Intentional Stance
+Intentional Stance -> was invented by -> Dennett  [haugeland-2023 15]
+Intentional Stance -> enables -> Intentional Interpretation
+Intentional Interpretation -> applies to* -> Neural Networks  @3
+Neural Networks -> gave rise to -> Connectionism
+Neural Networks -> is implemented by -> ChatGPT  // "powers" in the original
+GOFAI -> developed from* -> Formal System
+Formal System -> is constituted by -> Rules
+Rules -> is for manipulating* -> Tokens
+NFAI -> developed from -> GOFAI
+NFAI -> sees greatest hope in* -> Neural Networks
+NFAI -> sees anti-representational leaning in* -> Embodied AI
+Embodied AI -> has as an example -> Roomba
