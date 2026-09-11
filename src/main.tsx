@@ -1,9 +1,21 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Download, FileDown, HelpCircle, LayoutGrid, Plus, Search, X } from "lucide-react";
+import { Download, FileDown, HelpCircle, History as HistoryIcon, LayoutGrid, Plus, Redo2, Search, Undo2, X } from "lucide-react";
 import helpText from "../data/HELP.md?raw";
 import { diagnoseStructure } from "./engine";
 import { clipLineToRectangles, SVG_NODE_RECT_SIZE, SVG_VIEWBOX, scaleSizeToViewBox, type Size } from "./geometry";
+import {
+  createBackupDocument,
+  createHistoryEvent,
+  createHistoryState,
+  normalizeHistory,
+  recordHistoryEdit,
+  redoHistory,
+  sameEditableState,
+  undoHistory,
+  type EditableState,
+  type HistoryState,
+} from "./history";
 import "./index.css";
 
 type AnyMap = any;
@@ -27,16 +39,8 @@ const MANUAL_PACK_ID = "manual-user-authorship";
 const MANUAL_MAP_STORAGE = "weft-manual-map";
 const MANUAL_CONCEPT_BANK_STORAGE = "weft-manual-concept-bank";
 const MANUAL_RELATION_BANK_STORAGE = "weft-manual-relation-bank";
+const MANUAL_HISTORY_STORAGE = "weft-manual-history";
 const LEGACY_MAP_STORAGE = "weft-map";
-const conceptTypes = ["novel", "core-concept", "research-paradigm", "system-or-example", "figure", "text"];
-const colors: Record<string, string> = {
-  "core-concept": "#2f6fdd",
-  "research-paradigm": "#b85a51",
-  "system-or-example": "#5c9271",
-  figure: "#899196",
-  text: "#be8c40",
-  novel: "#69639a",
-};
 
 const emptyManualPack = {
   id: MANUAL_PACK_ID,
@@ -75,7 +79,7 @@ function normalizeMap(raw: any): AnyMap {
       ...concept,
       id: concept?.id || `concept-loaded-${index + 1}`,
       label: String(concept?.label || concept?.id || `Concept ${index + 1}`),
-      type: concept?.type || "novel",
+      type: "concept",
       pack_id: concept?.pack_id ?? null,
     }))
     : [];
@@ -146,6 +150,15 @@ function readStoredBank<T>(key: string, fallback: T[]): T[] {
   }
 }
 
+function readStoredHistory(): HistoryState {
+  try {
+    const stored = localStorage.getItem(MANUAL_HISTORY_STORAGE);
+    return stored ? normalizeHistory(JSON.parse(stored)) : createHistoryState();
+  } catch {
+    return createHistoryState();
+  }
+}
+
 function slug(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "item";
 }
@@ -159,8 +172,8 @@ function uniqueId(prefix: string, label: string, existing: { id: string }[]): st
   return id;
 }
 
-function makeConcept(label: string, type: string, existing: ManualConcept[]): ManualConcept {
-  return { id: uniqueId("concept", label, existing), label, type, pack_id: null };
+function makeConcept(label: string, existing: ManualConcept[]): ManualConcept {
+  return { id: uniqueId("concept", label, existing), label, type: "concept", pack_id: null };
 }
 
 function makeRelation(label: string, existing: ManualRelation[]): ManualRelation {
@@ -187,7 +200,7 @@ function normalizeConceptBank(raw: any[]): ManualConcept[] {
     .map((item, index) => ({
       id: String(item.id || `concept-${slug(item.label)}-${index + 1}`),
       label: item.label.trim(),
-      type: conceptTypes.includes(item.type) ? item.type : "novel",
+      type: "concept",
       pack_id: null,
     }))
     .filter(item => !seen.has(item.id) && seen.add(item.id));
@@ -247,13 +260,26 @@ function xmlEsc(value: string): string {
   }[character]!));
 }
 
+function displayTimestamp(timestamp: string): string {
+  const date = new Date(timestamp);
+  return Number.isNaN(date.getTime()) ? timestamp : date.toLocaleString();
+}
+
 function App() {
   const restored = useMemo(readStoredMap, []);
+  const restoredConceptBank = useMemo(
+    () => normalizeConceptBank(readStoredBank(MANUAL_CONCEPT_BANK_STORAGE, [])),
+    [],
+  );
+  const restoredRelationBank = useMemo(
+    () => normalizeRelationBank(readStoredBank(MANUAL_RELATION_BANK_STORAGE, [])),
+    [],
+  );
   const [map, setMap] = useState<AnyMap>(restored.map);
-  const [conceptBank, setConceptBank] = useState<ManualConcept[]>(() => normalizeConceptBank(readStoredBank(MANUAL_CONCEPT_BANK_STORAGE, [])));
-  const [relationBank, setRelationBank] = useState<ManualRelation[]>(() => normalizeRelationBank(readStoredBank(MANUAL_RELATION_BANK_STORAGE, [])));
+  const [conceptBank, setConceptBank] = useState<ManualConcept[]>(restoredConceptBank);
+  const [relationBank, setRelationBank] = useState<ManualRelation[]>(restoredRelationBank);
+  const [history, setHistory] = useState<HistoryState>(() => readStoredHistory());
   const [conceptLabelInput, setConceptLabelInput] = useState("");
-  const [conceptTypeInput, setConceptTypeInput] = useState("novel");
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [help, setHelp] = useState(false);
@@ -261,7 +287,7 @@ function App() {
   const [showWork, setShowWork] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState<{ x: number; y: number } | null>(null);
-  const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
+  const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; start: { x: number; y: number } } | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [storageNotice, setStorageNotice] = useState(restored.restoredLegacy);
   const mapRef = useRef(map);
@@ -271,6 +297,12 @@ function App() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [nodeSizes, setNodeSizes] = useState<Record<string, Size>>({});
+  const editableRef = useRef<EditableState>({
+    map: restored.map,
+    conceptBank: restoredConceptBank,
+    relationBank: restoredRelationBank,
+  });
+  const historyRef = useRef(history);
   const manualPack = useMemo(() => ({
     ...emptyManualPack,
     relations: relationBank,
@@ -317,22 +349,29 @@ function App() {
 
   useEffect(() => {
     mapRef.current = map;
+    editableRef.current = { map, conceptBank, relationBank };
+    historyRef.current = history;
     localStorage.setItem(MANUAL_MAP_STORAGE, JSON.stringify(map));
     localStorage.setItem(MANUAL_CONCEPT_BANK_STORAGE, JSON.stringify(conceptBank));
     localStorage.setItem(MANUAL_RELATION_BANK_STORAGE, JSON.stringify(relationBank));
+    localStorage.setItem(MANUAL_HISTORY_STORAGE, JSON.stringify(history));
     if ((map.meta?.edit_count || 0) !== previousEditCount.current) {
       previousEditCount.current = map.meta?.edit_count || 0;
       lastEditAt.current = Date.now();
     }
-  }, [map, conceptBank, relationBank]);
+  }, [map, conceptBank, relationBank, history]);
 
   useEffect(() => {
     const tick = window.setInterval(() => {
       if (document.visibilityState === "visible" && Date.now() - lastEditAt.current < 300000) {
-        setMap((current: AnyMap) => ({
-          ...current,
-          meta: { ...current.meta, session_seconds: (current.meta?.session_seconds || 0) + 1 },
-        }));
+        const current = editableRef.current;
+        const nextMap = {
+          ...current.map,
+          meta: { ...current.map.meta, session_seconds: (current.map.meta?.session_seconds || 0) + 1 },
+        };
+        editableRef.current = { ...current, map: nextMap };
+        mapRef.current = nextMap;
+        setMap(nextMap);
       }
     }, 1000);
     return () => window.clearInterval(tick);
@@ -349,20 +388,50 @@ function App() {
   };
   const toggle = (id: string) => setShowWork(current => ({ ...current, [id]: !current[id] }));
 
-  const addConcept = (concept: ManualConcept, at?: { x: number; y: number }) => {
-    if (mapRef.current.concepts.some((item: any) => item.id === concept.id)) return;
+  const applyEditableState = (next: EditableState) => {
+    editableRef.current = next;
+    mapRef.current = next.map;
+    setMap(next.map);
+    setConceptBank(next.conceptBank);
+    setRelationBank(next.relationBank);
+  };
+
+  const commitSnapshotEdit = (action: string, previous: EditableState, next: EditableState): boolean => {
+    if (sameEditableState(previous, next)) return false;
+    const event = createHistoryEvent("edit", action);
+    const nextHistory = recordHistoryEdit(historyRef.current, previous, next, event);
+    historyRef.current = nextHistory;
+    setHistory(nextHistory);
+    applyEditableState(next);
     lastEditAt.current = Date.now();
-    setMap((current: AnyMap) => ({
+    return true;
+  };
+
+  const commitEdit = (
+    action: string,
+    update: (current: EditableState) => EditableState,
+  ): boolean => {
+    const current = editableRef.current;
+    const next = update(current);
+    return commitSnapshotEdit(action, current, next);
+  };
+
+  const addConcept = (concept: ManualConcept, at?: { x: number; y: number }) => {
+    if (editableRef.current.map.concepts.some((item: any) => item.id === concept.id)) return;
+    commitEdit(`Placed concept "${concept.label}"`, current => ({
       ...current,
-      concepts: [...current.concepts, concept],
-      layout: {
-        ...current.layout,
-        [concept.id]: at || {
-          x: 180 + (current.concepts.length % 4) * 150,
-          y: 130 + Math.floor(current.concepts.length / 4) * 90,
+      map: {
+        ...current.map,
+        concepts: [...current.map.concepts, concept],
+        layout: {
+          ...current.map.layout,
+          [concept.id]: at || {
+            x: 180 + (current.map.concepts.length % 4) * 150,
+            y: 130 + Math.floor(current.map.concepts.length / 4) * 90,
+          },
         },
+        meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
       },
-      meta: { ...current.meta, edit_count: (current.meta?.edit_count || 0) + 1 },
     }));
   };
 
@@ -383,18 +452,22 @@ function App() {
       status: "asserted",
       derived_from: null,
     };
-    lastEditAt.current = Date.now();
-    setMap((current: AnyMap) => ({
+    const added = commitEdit(`Connected concepts with "${relation.label}"`, current => ({
       ...current,
-      propositions: [...current.propositions, proposition],
-      meta: {
-        ...current.meta,
-        edit_count: (current.meta?.edit_count || 0) + 1,
-        added_by: { ...current.meta.added_by, drawn: (current.meta?.added_by?.drawn || 0) + 1 },
+      map: {
+        ...current.map,
+        propositions: [...current.map.propositions, proposition],
+        meta: {
+          ...current.map.meta,
+          edit_count: (current.map.meta?.edit_count || 0) + 1,
+          added_by: { ...current.map.meta.added_by, drawn: (current.map.meta?.added_by?.drawn || 0) + 1 },
+        },
       },
     }));
-    setSelected([]);
-    setPicker(null);
+    if (added) {
+      setSelected([]);
+      setPicker(null);
+    }
   };
 
   const addConceptToBank = (event: React.FormEvent) => {
@@ -405,9 +478,11 @@ function App() {
       setConceptLabelInput("");
       return;
     }
-    setConceptBank(current => [...current, makeConcept(label, conceptTypeInput, current)]);
+    commitEdit(`Added concept "${label}" to the bank`, current => ({
+      ...current,
+      conceptBank: [...current.conceptBank, makeConcept(label, current.conceptBank)],
+    }));
     setConceptLabelInput("");
-    lastEditAt.current = Date.now();
   };
 
   const addRelationToBank = (event: React.FormEvent) => {
@@ -418,15 +493,18 @@ function App() {
       setRelationLabelInput("");
       return;
     }
-    setRelationBank(current => [...current, makeRelation(label, current)]);
+    commitEdit(`Added relation "${label}" to the bank`, current => ({
+      ...current,
+      relationBank: [...current.relationBank, makeRelation(label, current.relationBank)],
+    }));
     setRelationLabelInput("");
-    lastEditAt.current = Date.now();
   };
 
   const autoLayout = () => {
-    const columns = Math.max(1, Math.ceil(Math.sqrt(map.concepts.length)));
+    const currentMap = editableRef.current.map;
+    const columns = Math.max(1, Math.ceil(Math.sqrt(currentMap.concepts.length)));
     const layout: Record<string, { x: number; y: number }> = {};
-    map.concepts.forEach((concept: any, index: number) => {
+    currentMap.concepts.forEach((concept: any, index: number) => {
       const column = index % columns;
       const row = Math.floor(index / columns);
       layout[concept.id] = {
@@ -434,15 +512,70 @@ function App() {
         y: 75 + row * 105,
       };
     });
-    setMap((current: AnyMap) => ({
+    commitEdit("Rearranged the canvas", current => ({
       ...current,
-      layout,
-      meta: { ...current.meta, edit_count: (current.meta?.edit_count || 0) + 1 },
+      map: {
+        ...current.map,
+        layout,
+        meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
+      },
     }));
+  };
+
+  const save = () => download(
+    `${(map.title || "colligate-map").replace(/\s+/g, "-")}.map.json`,
+    JSON.stringify(createBackupDocument(map, conceptBank, relationBank, history), null, 2),
+  );
+
+  const undo = () => {
+    const currentHistory = historyRef.current;
+    const entry = currentHistory.past[currentHistory.past.length - 1];
+    if (!entry) return;
+    const event = createHistoryEvent("undo", `Undo: ${entry.action.action}`);
+    const result = undoHistory(currentHistory, editableRef.current, event);
+    if (!result) return;
+    historyRef.current = result.history;
+    setHistory(result.history);
+    applyEditableState(result.state);
+    setSelected([]);
+    setPicker(null);
     lastEditAt.current = Date.now();
   };
 
-  const save = () => download(`${(map.title || "colligate-map").replace(/\s+/g, "-")}.map.json`, JSON.stringify(map, null, 2));
+  const redo = () => {
+    const currentHistory = historyRef.current;
+    const entry = currentHistory.future[currentHistory.future.length - 1];
+    if (!entry) return;
+    const event = createHistoryEvent("redo", `Redo: ${entry.action.action}`);
+    const result = redoHistory(currentHistory, editableRef.current, event);
+    if (!result) return;
+    historyRef.current = result.history;
+    setHistory(result.history);
+    applyEditableState(result.state);
+    setSelected([]);
+    setPicker(null);
+    lastEditAt.current = Date.now();
+  };
+
+  useEffect(() => {
+    const onShortcut = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target?.tagName || "")) return;
+      const modifier = event.ctrlKey || event.metaKey;
+      if (!modifier) return;
+      const key = event.key.toLowerCase();
+      if (key === "z") {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
+      } else if (key === "y") {
+        event.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener("keydown", onShortcut);
+    return () => window.removeEventListener("keydown", onShortcut);
+  }, [history]);
 
   const exportSvg = () => {
     const edges = map.propositions.map((proposition: any) => {
@@ -454,8 +587,7 @@ function App() {
     const nodes = map.concepts.map((concept: any, index: number) => {
       const point = pos(concept.id, index);
       const label = xmlEsc(concept.label);
-      const type = xmlEsc(String(concept.type || "novel").replace(/-/g, " "));
-      return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" rx="5" fill="#fffdf8" stroke="${colors[concept.type] || "#6e7b7b"}" stroke-width="2"/><text x="70" y="19" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#243b3c">${label}</text><text x="70" y="34" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#687775">${type}</text></g>`;
+      return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" rx="5" fill="#fffdf8" stroke="#6e7b7b" stroke-width="2"/><text x="70" y="26" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#243b3c">${label}</text></g>`;
     }).join("");
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="1200" height="900"><rect width="800" height="600" fill="#f8f6f0"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#899694"/></marker></defs>${edges}${nodes}</svg>`;
     download("colligate-map.svg", svg, "image/svg+xml");
@@ -472,30 +604,52 @@ function App() {
     const canvas = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const x = (event.clientX - canvas.left) * 800 / canvas.width - drag.dx;
     const y = (event.clientY - canvas.top) * 600 / canvas.height - drag.dy;
-    setMap((current: AnyMap) => ({
-      ...current,
+    const current = editableRef.current;
+    const nextMap = {
+      ...current.map,
       layout: {
-        ...current.layout,
+        ...current.map.layout,
         [drag.id]: { x: Math.max(20, Math.min(780, x)), y: Math.max(20, Math.min(580, y)) },
       },
-    }));
+    };
+    editableRef.current = { ...current, map: nextMap };
+    mapRef.current = nextMap;
+    setMap(nextMap);
   };
   const finishDrag = () => {
     if (!drag) return;
-    setMap((current: AnyMap) => ({
-      ...current,
-      meta: { ...current.meta, edit_count: (current.meta?.edit_count || 0) + 1 },
-    }));
-    lastEditAt.current = Date.now();
+    const current = editableRef.current;
+    const movedTo = current.map.layout?.[drag.id];
+    const movedFrom = drag.start;
+    const changed = movedTo && (movedTo.x !== movedFrom.x || movedTo.y !== movedFrom.y);
+    if (changed) {
+      const previous: EditableState = {
+        ...current,
+        map: {
+          ...current.map,
+          layout: { ...current.map.layout, [drag.id]: movedFrom },
+        },
+      };
+      const next: EditableState = {
+        ...current,
+        map: {
+          ...current.map,
+          meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
+        },
+      };
+      commitSnapshotEdit(`Moved node "${conceptLabel(drag.id, current.map)}"`, previous, next);
+    }
     setDrag(null);
   };
   const updateFocus = (focus_question: string) => {
-    setMap((current: AnyMap) => ({
+    commitEdit("Changed the focus question", current => ({
       ...current,
-      focus_question,
-      meta: { ...current.meta, edit_count: (current.meta?.edit_count || 0) + 1 },
+      map: {
+        ...current.map,
+        focus_question,
+        meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
+      },
     }));
-    lastEditAt.current = Date.now();
   };
   const panelWork = (id: string, derivation: any) => showWork[id]
     ? <div className="derivation">{Array.isArray(derivation) ? derivation.join("\n") : String(derivation || "Counted directly from the propositions you added.")}</div>
@@ -510,9 +664,11 @@ function App() {
 
   return <div className="shell" onClick={() => picker && setPicker(null)}>
     <header className="topbar">
-      <div className="brand">COLLIGATE <small>MANUAL CONCEPT MAPS</small></div>
+      <div className="brand">COLLIGATE <small>CONCEPT MAPS</small></div>
       <div className="focus"><label>Focus question</label><input value={map.focus_question || ""} onChange={event => updateFocus(event.target.value)} /></div>
       <div className="toolbar">
+        <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action"><Undo2 size={14} />Undo</button>
+        <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action"><Redo2 size={14} />Redo</button>
         <button className="btn primary" onClick={save}><Download size={14} />Save map</button>
         <button className="btn ghost" onClick={exportSvg}><FileDown size={14} />Export SVG</button>
         <button className="btn ghost" onClick={() => setHelp(true)}><HelpCircle size={14} />Help</button>
@@ -523,8 +679,6 @@ function App() {
         <div className="pane-head">
           <div>
             <div className="eyebrow">01 / propositions</div>
-            <h2>Your map in sentences</h2>
-            <div className="subtle">Read-only record of the arrows you add on the canvas.</div>
           </div>
           <span className="pill">{map.propositions.length} propositions</span>
         </div>
@@ -546,9 +700,6 @@ function App() {
             <label htmlFor="concept-label">Add concept</label>
             <div className="form-row">
               <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
-              <select aria-label="Concept type" value={conceptTypeInput} onChange={event => setConceptTypeInput(event.target.value)}>
-                {conceptTypes.map(type => <option key={type} value={type}>{type.replace(/-/g, " ")}</option>)}
-              </select>
               <button className="btn small" type="submit"><Plus size={13} />Add concept</button>
             </div>
           </form>
@@ -575,12 +726,13 @@ function App() {
         </div>
       </section>
       <section className="pane canvas-pane">
-        <div className="canvas-tools"><div><div className="eyebrow">02 / canvas</div><div className="subtle">Place concepts, then click two nodes to add an arrow</div></div><button className="btn" style={{ color: "#435358", borderColor: "#c4cbc5" }} onClick={autoLayout}><LayoutGrid size={14} />Auto-layout</button></div>
+        <div className="canvas-tools"><div><div className="eyebrow">02 / conceptual space</div></div><button className="btn" style={{ color: "#435358", borderColor: "#c4cbc5" }} onClick={autoLayout}><LayoutGrid size={14} />Auto-layout</button></div>
         <div
           ref={canvasRef}
           className="canvas"
           onPointerMove={onPointerMove}
           onPointerUp={finishDrag}
+           onPointerCancel={finishDrag}
           onDragOver={event => event.preventDefault()}
           onDrop={event => {
             event.preventDefault();
@@ -613,16 +765,21 @@ function App() {
               role="button"
               tabIndex={0}
               aria-pressed={selected.includes(concept.id)}
-              aria-label={`${concept.label}, ${String(concept.type || "novel").replace(/-/g, " ")}`}
-              className={`node type-${concept.type || "novel"} ${selected.includes(concept.id) ? "selected" : ""}`}
-              style={{ left: `${point.x / 8}%`, top: `${point.y / 6}%`, borderLeftColor: colors[concept.type] || "#6e7b7b" }}
+              aria-label={concept.label}
+              className={`node ${selected.includes(concept.id) ? "selected" : ""}`}
+              style={{ left: `${point.x / 8}%`, top: `${point.y / 6}%`, borderLeftColor: "#6e7b7b" }}
               onPointerDown={event => {
                 event.stopPropagation();
                 event.currentTarget.setPointerCapture(event.pointerId);
                 const rect = (event.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
                 const viewX = (event.clientX - rect.left) * 800 / rect.width;
                 const viewY = (event.clientY - rect.top) * 600 / rect.height;
-                setDrag({ id: concept.id, dx: viewX - point.x, dy: viewY - point.y });
+                 setDrag({
+                   id: concept.id,
+                   dx: viewX - point.x,
+                   dy: viewY - point.y,
+                   start: { x: point.x, y: point.y },
+                 });
               }}
               onKeyDown={event => {
                 if (event.key === "Enter" || event.key === " ") {
@@ -638,7 +795,7 @@ function App() {
                   setPicker({ x: point.x, y: point.y + 48 });
                 } else setSelected([concept.id]);
               }}
-            >{concept.label}<small>{String(concept.type || "novel").replace(/-/g, " ")}</small></div>;
+            >{concept.label}</div>;
           })}
           {picker && <div className="picker" role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
             <h4>Choose one of your relations</h4>
@@ -650,6 +807,7 @@ function App() {
       <aside className="pane right-pane">
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">03 / structure</div><h2>What shape is this?</h2></div><button className="work" onClick={() => toggle("structure")}>{showWork.structure ? "hide" : "show your work"}</button></div><div className="metric-grid"><div className="metric"><strong>{structure?.concepts ?? map.concepts.length}</strong><span>concepts</span></div><div className="metric"><strong>{structure?.propositions ?? map.propositions.length}</strong><span>propositions</span></div><div className="metric"><strong>{structure?.components ?? "—"}</strong><span>components</span></div><div className="metric"><strong>{structure?.density !== undefined ? Number(structure.density).toFixed(2) : "—"}</strong><span>density</span></div></div><p className="observation">Shape: <strong>{structure?.label || "tree"}</strong>. {structure?.orphans?.length ? `${structure.orphans.length} concepts are not connected yet.` : "Every concept is part of the conversation."}</p>{panelWork("structure", structure?.derivation)}</div>
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">manual assembly</div><h2>You make every connection</h2></div></div><p className="observation">This workspace has no course pack, imported text path, inference accept button, or reference-map comparison. Only concepts placed on the canvas and relations you create can become part of this map.</p><div className="metric-grid"><div className="metric"><strong>{conceptBank.length}</strong><span>bank concepts</span></div><div className="metric"><strong>{relationBank.length}</strong><span>bank relations</span></div><div className="metric"><strong>{selected.length}</strong><span>selected nodes</span></div><div className="metric"><strong>{map.meta?.added_by?.drawn || 0}</strong><span>arrows added</span></div></div></div>
+         <div className="panel timeline-panel"><div className="panel-title"><div><div className="eyebrow"><HistoryIcon size={12} /> timeline</div><h2>Map history</h2></div><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">saved locally</div><h2>Keep your map file</h2></div></div><p className="observation">Your map and your two banks are saved in this browser. Use <strong>Save map</strong> for a JSON copy and <strong>Export SVG</strong> for a picture.</p></div>
       </aside>
     </main>

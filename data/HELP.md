@@ -15,7 +15,7 @@ they do not add anything to it.
 
 ### Build a map from scratch
 
-1. Enter a concept label in **Add concept**. Choose a type if useful, then press **Add
+1. Enter a concept label in **Add concept**, then press **Add
    concept**. The label appears in **Your concept bank**.
 2. Enter a relation label in **Add relation** and press **Add relation**. It appears in
    **Your relation bank**.
