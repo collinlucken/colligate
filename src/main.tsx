@@ -275,11 +275,8 @@ function Corners() {
 }
 
 function App() {
-  const [texture, setTexture] = useState(() => localStorage.getItem("colligate-texture") !== "off");
-  const [projector, setProjector] = useState(false);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [exportError, setExportError] = useState("");
-  useEffect(() => { localStorage.setItem("colligate-texture", texture ? "on" : "off"); }, [texture]);
   const restored = useMemo(readStoredMap, []);
   const restoredConceptBank = useMemo(
     () => normalizeConceptBank(readStoredBank(MANUAL_CONCEPT_BANK_STORAGE, [])),
@@ -728,7 +725,7 @@ function App() {
     return helpText.slice(start + heading.length, end < 0 ? undefined : end).trim();
   };
 
-  return <div className={`shell ${texture ? "textured" : ""} ${projector ? "projector" : ""} ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
+  return <div className={`shell textured ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
     <header className="topbar">
       <div className="app-mark"><Monogram /></div>
       <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
@@ -740,8 +737,6 @@ function App() {
         <button className="btn primary" onClick={save}>Save map</button>
         <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
         <button className="btn" onClick={() => window.print()}>Print / PDF</button>
-        <button className="btn" aria-pressed={texture} onClick={() => setTexture(!texture)}>Texture {texture ? "on" : "off"}</button>
-        <button className="btn" aria-pressed={projector} onClick={() => setProjector(!projector)}>Projector {projector ? "on" : "off"}</button>
         <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
       </div>
     </header>
