@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Download, FileDown, HelpCircle, History as HistoryIcon, LayoutGrid, Plus, Redo2, Search, Undo2, X } from "lucide-react";
+import archivoFontUrl from "./assets/ArchivoNarrow-Regular.ttf?url";
 import helpText from "../data/HELP.md?raw";
 import { diagnoseStructure } from "./engine";
 import { clipLineToRectangles, SVG_NODE_RECT_SIZE, SVG_VIEWBOX, scaleSizeToViewBox, type Size } from "./geometry";
@@ -265,7 +265,20 @@ function displayTimestamp(timestamp: string): string {
   return Number.isNaN(date.getTime()) ? timestamp : date.toLocaleString();
 }
 
+function Monogram() {
+  return <svg className="monogram" viewBox="0 0 40 40" aria-hidden="true"><path fill="currentColor" fillRule="evenodd" d="M0 0h40v40H0z M3 3v34h34V3z M8 8h24v7H15v10h17v7H8z M19 18h16v4H19z" /></svg>;
+}
+
+function Corners() {
+  return <>{[0, 1, 2, 3].map(corner => <span className="corner" key={corner}><Monogram /></span>)}</>;
+}
+
 function App() {
+  const [texture, setTexture] = useState(() => localStorage.getItem("colligate-texture") !== "off");
+  const [projector, setProjector] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [exportError, setExportError] = useState("");
+  useEffect(() => { localStorage.setItem("colligate-texture", texture ? "on" : "off"); }, [texture]);
   const restored = useMemo(readStoredMap, []);
   const restoredConceptBank = useMemo(
     () => normalizeConceptBank(readStoredBank(MANUAL_CONCEPT_BANK_STORAGE, [])),
@@ -283,6 +296,23 @@ function App() {
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [help, setHelp] = useState(false);
+  useEffect(() => {
+    if (!help && !inspectorOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const panel = document.querySelector(help ? ".modal" : ".proposition-pane");
+    const controls = () => Array.from(panel?.querySelectorAll<HTMLElement>('button:not(:disabled), input, [tabindex="0"]') || []);
+    controls()[0]?.focus();
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setHelp(false); setInspectorOpen(false); }
+      if (event.key !== "Tab") return;
+      const items = controls();
+      const first = items[0], last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => { document.removeEventListener("keydown", handleKey); previous?.focus(); };
+  }, [help, inspectorOpen]);
   const [helpTab, setHelpTab] = useState("students");
   const [showWork, setShowWork] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<string[]>([]);
@@ -577,20 +607,32 @@ function App() {
     return () => window.removeEventListener("keydown", onShortcut);
   }, [history]);
 
-  const exportSvg = () => {
+  const exportSvg = async () => {
+    setExportError("");
+    try {
+    // The local OFL font is embedded so the downloaded plate remains self-contained.
+    const fontResponse = await fetch(archivoFontUrl);
+    const fontBytes = new Uint8Array(await fontResponse.arrayBuffer());
+    let fontBinary = "";
+    fontBytes.forEach(byte => { fontBinary += String.fromCharCode(byte); });
+    const fontStyle = `@font-face{font-family:Archivo;src:url(data:font/ttf;base64,${btoa(fontBinary)})}text{font-family:Archivo,sans-serif;font-weight:400;letter-spacing:1.2px}`;
     const edges = map.propositions.map((proposition: any) => {
       const a = pos(proposition.subject, map.concepts.findIndex((concept: any) => concept.id === proposition.subject));
       const b = pos(proposition.object, map.concepts.findIndex((concept: any) => concept.id === proposition.object));
       const edge = clipLineToRectangles(a, b, SVG_NODE_RECT_SIZE, SVG_NODE_RECT_SIZE);
-      return `<g><line x1="${edge.start.x}" y1="${edge.start.y}" x2="${edge.end.x}" y2="${edge.end.y}" stroke="#899694" stroke-width="1.5" marker-end="url(#arrow)"/><text x="${(a.x + b.x) / 2}" y="${(a.y + b.y) / 2 - 7}" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#465654">${xmlEsc(relationLabel(proposition.relation, relationBank, proposition.as_written?.relation))}</text></g>`;
+      return `<g><line x1="${edge.start.x}" y1="${edge.start.y}" x2="${edge.end.x}" y2="${edge.end.y}" stroke="#201C18" stroke-width="1" marker-end="url(#arrow)"/><text x="${(a.x + b.x) / 2}" y="${(a.y + b.y) / 2 - 6}" text-anchor="middle" font-size="10" fill="#5A5148" stroke="#EDE4D2" stroke-width="8" paint-order="stroke">${xmlEsc(relationLabel(proposition.relation, relationBank, proposition.as_written?.relation).toUpperCase())}</text></g>`;
     }).join("");
     const nodes = map.concepts.map((concept: any, index: number) => {
       const point = pos(concept.id, index);
-      const label = xmlEsc(concept.label);
-      return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" rx="5" fill="#fffdf8" stroke="#6e7b7b" stroke-width="2"/><text x="70" y="26" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#243b3c">${label}</text></g>`;
+      const label = xmlEsc(concept.label.toUpperCase());
+      return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" fill="#EDE4D2" stroke="#201C18" stroke-width="1"/><text x="70" y="27" text-anchor="middle" font-size="15" fill="#201C18">${label}</text></g>`;
     }).join("");
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="1200" height="900"><rect width="800" height="600" fill="#f8f6f0"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#899694"/></marker></defs>${edges}${nodes}</svg>`;
+    const marks = [[10,10],[830,10],[10,680],[830,680]].map(([x,y]) => `<g transform="translate(${x} ${y}) scale(.5)" fill="#C4441C"><path fill-rule="evenodd" d="M0 0h40v40H0z M3 3v34h34V3z M8 8h24v7H15v10h17v7H8z M19 18h16v4H19z"/></g>`).join("");
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="#5A5148">COLLIGATE · CONCEPT MAPS · ${xmlEsc(new Date().toLocaleDateString())}</text>${marks}</svg>`;
     download("colligate-map.svg", svg, "image/svg+xml");
+    } catch {
+      setExportError("SVG export could not load the local font.");
+    }
   };
 
   const nodeSize = (id: string) => nodeSizes[id] || SVG_NODE_RECT_SIZE;
@@ -662,20 +704,27 @@ function App() {
     return helpText.slice(start + heading.length, end < 0 ? undefined : end).trim();
   };
 
-  return <div className="shell" onClick={() => picker && setPicker(null)}>
+  return <div className={`shell ${texture ? "textured" : ""} ${projector ? "projector" : ""} ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
     <header className="topbar">
-      <div className="brand">COLLIGATE <small>CONCEPT MAPS</small></div>
-      <div className="focus"><label>Focus question</label><input value={map.focus_question || ""} onChange={event => updateFocus(event.target.value)} /></div>
+      <div className="app-mark"><Monogram /></div>
+      <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
+      <div className="edition">Concepts <small>&amp;</small> relations</div>
+      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={map.focus_question || ""} onChange={event => updateFocus(event.target.value)} /></div>
       <div className="toolbar">
-        <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action"><Undo2 size={14} />Undo</button>
-        <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action"><Redo2 size={14} />Redo</button>
-        <button className="btn primary" onClick={save}><Download size={14} />Save map</button>
-        <button className="btn ghost" onClick={exportSvg}><FileDown size={14} />Export SVG</button>
-        <button className="btn ghost" onClick={() => setHelp(true)}><HelpCircle size={14} />Help</button>
+        <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action">Undo</button>
+        <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
+        <button className="btn primary" onClick={save}>Save map</button>
+        <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
+        <button className="btn" onClick={() => window.print()}>Print / PDF</button>
+        <button className="btn" aria-pressed={texture} onClick={() => setTexture(!texture)}>Texture {texture ? "on" : "off"}</button>
+        <button className="btn" aria-pressed={projector} onClick={() => setProjector(!projector)}>Projector {projector ? "on" : "off"}</button>
+        <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
       </div>
     </header>
+    {exportError && <div className="storage-notice" role="alert">{exportError} <button className="btn" onClick={exportSvg}>Retry export</button></div>}
     <main className="workspace">
       <section className="pane proposition-pane">
+        <button className="btn inspector-close" onClick={() => setInspectorOpen(false)}>Close inspector</button>
         <div className="pane-head">
           <div>
             <div className="eyebrow">01 / propositions</div>
@@ -687,7 +736,7 @@ function App() {
           <button className="work" onClick={() => setStorageNotice(false)}>hide</button>
         </div>}
         <div className="proposition-list" aria-label="Read-only propositions">
-          {!map.propositions.length && <div className="proposition-empty">Add concepts to your bank, place them on the canvas, select two nodes, and add a relation.</div>}
+          {!map.propositions.length && <div className="proposition-empty">No propositions yet.</div>}
           {map.propositions.map((proposition: any) => <div className="proposition" key={proposition.id}>
             <span className="proposition-index">{proposition.id}</span>
             <strong>{propositionText(proposition, map, relationBank)}</strong>
@@ -700,14 +749,14 @@ function App() {
             <label htmlFor="concept-label">Add concept</label>
             <div className="form-row">
               <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
-              <button className="btn small" type="submit"><Plus size={13} />Add concept</button>
+               <button className="btn small" type="submit">Add concept</button>
             </div>
           </form>
           <div className="bank bank-inline">
             <div className="bank-heading"><span className="eyebrow">Your concept bank · {conceptBank.length}</span><span className="subtle">Click or drag to place</span></div>
-            <div style={{ position: "relative" }}><Search size={13} style={{ position: "absolute", top: 12, left: 9, color: "#8a9791" }} /><input className="search" style={{ paddingLeft: 28 }} value={query} onChange={event => setQuery(event.target.value)} placeholder="Search your concepts" /></div>
+            <div><label className="subtle" htmlFor="concept-search">Search concepts</label><input id="concept-search" className="search" value={query} onChange={event => setQuery(event.target.value)} /></div>
             <div className="chips">
-              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas"><Plus size={11} />{concept.label}</button>)}
+              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas">{concept.label}</button>)}
               {!conceptBank.length && <span className="bank-empty">No concepts yet. Add your first one above.</span>}
               {!!conceptBank.length && !bank.length && <span className="bank-empty">No matching concepts.</span>}
             </div>
@@ -716,7 +765,7 @@ function App() {
             <label htmlFor="relation-label">Add relation</label>
             <div className="form-row">
               <input id="relation-label" value={relationLabelInput} onChange={event => setRelationLabelInput(event.target.value)} placeholder="Relation label" />
-              <button className="btn small" type="submit"><Plus size={13} />Add relation</button>
+              <button className="btn small" type="submit">Add relation</button>
             </div>
           </form>
           <div className="relation-bank"><span className="eyebrow">Your relation bank · {relationBank.length}</span><div className="chips">
@@ -726,7 +775,8 @@ function App() {
         </div>
       </section>
       <section className="pane canvas-pane">
-        <div className="canvas-tools"><div><div className="eyebrow">02 / conceptual space</div></div><button className="btn" style={{ color: "#435358", borderColor: "#c4cbc5" }} onClick={autoLayout}><LayoutGrid size={14} />Auto-layout</button></div>
+        <div className="print-corners"><Corners /></div>
+        <div className="canvas-tools"><div className="eyebrow">Conceptual space</div><button className="btn inspector-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(true)}>Add concept / relation</button><button className="btn" onClick={autoLayout}>Auto-layout</button></div>
         <div
           ref={canvasRef}
           className="canvas"
@@ -748,7 +798,7 @@ function App() {
           }}
         >
           <svg ref={svgRef} viewBox="0 0 800 600" preserveAspectRatio="none">
-            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#9aa5a3" /></marker></defs>
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="var(--ink)" /></marker></defs>
             {map.propositions.map((proposition: any) => {
               const a = pos(proposition.subject, map.concepts.findIndex((concept: any) => concept.id === proposition.subject));
               const b = pos(proposition.object, map.concepts.findIndex((concept: any) => concept.id === proposition.object));
@@ -756,7 +806,7 @@ function App() {
               return <g key={proposition.id}><line className={`edge ${highlighted.includes(proposition.id) ? "edge-highlight" : ""}`} markerEnd="url(#arrow)" x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} /><text className="edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 6} textAnchor="middle">{relationLabel(proposition.relation, relationBank, proposition.as_written?.relation)}</text></g>;
             })}
           </svg>
-          {!map.propositions.length && <div className="empty"><div className="empty-inner"><p>Your map is made by you. Add concepts and relations in the left pane, then assemble every arrow here.</p><a onClick={() => setHelp(true)}>Read the manual workflow in Help.</a></div></div>}
+          {!map.concepts.length && <div className="empty"><div className="empty-inner"><Corners /><p>CONCEPT MAPS</p><h1>Concepts<br /><small>and</small> relations</h1><Monogram /><p>Conceptual space</p></div></div>}
           {map.concepts.map((concept: any, index: number) => {
             const point = pos(concept.id, index);
             return <div
@@ -767,7 +817,7 @@ function App() {
               aria-pressed={selected.includes(concept.id)}
               aria-label={concept.label}
               className={`node ${selected.includes(concept.id) ? "selected" : ""}`}
-              style={{ left: `${point.x / 8}%`, top: `${point.y / 6}%`, borderLeftColor: "#6e7b7b" }}
+              style={{ left: `${point.x / 8}%`, top: `${point.y / 6}%` }}
               onPointerDown={event => {
                 event.stopPropagation();
                 event.currentTarget.setPointerCapture(event.pointerId);
@@ -799,20 +849,19 @@ function App() {
           })}
           {picker && <div className="picker" role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
             <h4>Choose one of your relations</h4>
-            {!relationBank.length && <div className="picker-empty">Add a relation in the left pane first.</div>}
+            {!relationBank.length && <div className="picker-empty">No relations in your bank.</div>}
             {relationBank.map(relation => <button key={relation.id} onClick={() => addRelation(relation)}>{relation.label}</button>)}
           </div>}
         </div>
+        <div className="print-caption"><Monogram /><span>{map.title} · COLLIGATE · CONCEPT MAPS · {new Date().toLocaleDateString()}</span><Monogram /></div>
       </section>
       <aside className="pane right-pane">
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">03 / structure</div><h2>What shape is this?</h2></div><button className="work" onClick={() => toggle("structure")}>{showWork.structure ? "hide" : "show your work"}</button></div><div className="metric-grid"><div className="metric"><strong>{structure?.concepts ?? map.concepts.length}</strong><span>concepts</span></div><div className="metric"><strong>{structure?.propositions ?? map.propositions.length}</strong><span>propositions</span></div><div className="metric"><strong>{structure?.components ?? "—"}</strong><span>components</span></div><div className="metric"><strong>{structure?.density !== undefined ? Number(structure.density).toFixed(2) : "—"}</strong><span>density</span></div></div><p className="observation">Shape: <strong>{structure?.label || "tree"}</strong>. {structure?.orphans?.length ? `${structure.orphans.length} concepts are not connected yet.` : "Every concept is part of the conversation."}</p>{panelWork("structure", structure?.derivation)}</div>
-        <div className="panel"><div className="panel-title"><div><div className="eyebrow">manual assembly</div><h2>You make every connection</h2></div></div><p className="observation">This workspace has no course pack, imported text path, inference accept button, or reference-map comparison. Only concepts placed on the canvas and relations you create can become part of this map.</p><div className="metric-grid"><div className="metric"><strong>{conceptBank.length}</strong><span>bank concepts</span></div><div className="metric"><strong>{relationBank.length}</strong><span>bank relations</span></div><div className="metric"><strong>{selected.length}</strong><span>selected nodes</span></div><div className="metric"><strong>{map.meta?.added_by?.drawn || 0}</strong><span>arrows added</span></div></div></div>
-         <div className="panel timeline-panel"><div className="panel-title"><div><div className="eyebrow"><HistoryIcon size={12} /> timeline</div><h2>Map history</h2></div><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
-        <div className="panel"><div className="panel-title"><div><div className="eyebrow">saved locally</div><h2>Keep your map file</h2></div></div><p className="observation">Your map and your two banks are saved in this browser. Use <strong>Save map</strong> for a JSON copy and <strong>Export SVG</strong> for a picture.</p></div>
+         <div className="panel timeline-panel"><div className="panel-title"><h2>Map history</h2><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
       </aside>
     </main>
-    <footer className="footer">Built on the maker's knowledge principle. No AI, course pack, inference, or automatic map authoring.</footer>
-    {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" onClick={event => event.stopPropagation()}><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button className="btn" style={{ color: "#435358", borderColor: "#c4cbc5" }} onClick={() => setHelp(false)}><X size={15} /></button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
+    <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
+    {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" role="dialog" aria-modal="true" aria-label="Help" onKeyDown={event => { if (event.key === "Escape") setHelp(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button autoFocus className="btn" onClick={() => setHelp(false)}>Close</button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
   </div>;
 }
 
