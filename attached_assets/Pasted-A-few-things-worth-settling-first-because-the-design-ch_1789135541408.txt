@@ -1,0 +1,35 @@
+A few things worth settling first, because the design changes a lot depending on which one you want:
+
+**If you want it genuinely impossible, you mostly can't.** Anything a human can do through a browser is a sequence of pixels in and input events out. An agent with a real browser, a real GPU, and enough patience is operating in the same channel a person is. What you can actually do is raise cost and lower reliability until automating it isn't worth it, or until it's distinguishable enough to block. That's a different goal, and it's achievable.
+
+**The big tax is accessibility.** Almost every technique that blinds an agent also blinds a screen reader, and in many jurisdictions that's a legal problem, not just an ethical one. Agents and assistive tech consume interfaces through nearly the same channels. If you're building something real, you need an accessible path that's gated by identity or attestation rather than by obscurity. If it's an art project or a puzzle, ignore this and go wild.
+
+## Techniques that actually degrade agent performance
+
+**Starve the semantic layer.** Render to canvas or WebGL, not DOM. No accessibility tree, no selectors, no text extraction, no `find`-by-description. This is the single biggest one, which is why Figma and Google Docs are painful for agents largely by accident.
+
+**Attack the screenshot pipeline.** Agents downsample images to fit token budgets. Small text, low contrast, fine visual distinctions that matter, information encoded in subtle color or spatial relationships, and important elements at the edges of a large viewport all survive human vision and die in a resize to 1024px wide.
+
+**Demand motor skills the action space lacks.** Drag-and-drop with precision, hover-to-reveal with dwell time, gestures, multi-touch, click-and-hold, drawing, sliders that need fine control, chorded modifier keys, drag paths that must follow a shape. Most agent harnesses have click, type, scroll, and a crude drag.
+
+**Make state non-visible and non-recoverable.** Information that's only available transiently, UI that requires remembering what was on screen three steps ago, no undo, destructive mistakes. Agents have weak working memory across screenshots and recover badly from errors.
+
+**Demand real-time response.** A control loop that requires reaction under ~500ms is nearly free for a human and structurally hard for anything doing a screenshot → inference → action round trip. Rhythm, continuous tracking, anything with a moving target. This is probably the hardest single barrier that doesn't hurt accessibility much for most users, though it does exclude people with motor impairments.
+
+**Make the layout nondeterministic.** Element positions that shift per session, per render, or after each interaction. Breaks both selector-based and coordinate-memorizing approaches. Costs you nothing in accessibility if the accessibility tree stays stable, but then the accessibility tree is the hole.
+
+**Raise the per-step cost.** Long sessions, many steps, heavy screenshots. Context windows are finite and inference is metered. A task requiring 300 careful steps is tedious for a human and often flatly infeasible for an agent.
+
+## Techniques that are mostly theater
+
+Obfuscated class names, randomized IDs, and DOM scrambling stop scrapers but do nothing to a vision-based agent. `user-select: none` and right-click blocking stop nobody. Detecting `navigator.webdriver` catches only lazy automation. Text-as-images is defeated by OCR and costs you SEO and screen readers for nothing.
+
+## The other axis: don't detect the agent, authenticate the human
+
+If the real goal is keeping automation out of a production system, perception-level obstacles are the weak version. The stronger version is proof of humanity or proof of accountability at the boundary: hardware-backed attestation, payment instruments, government or institutional identity, invite graphs, staked deposits that get burned on abuse. These don't care whether the traffic is an agent. They make abuse expensive and attributable, which is usually what you actually wanted.
+
+Behavioral biometrics (mouse path curvature, keystroke timing, saccade-like scroll patterns) sit in between. They work now and will keep working for a while, but they're an arms race and they misfire on people with tremors, on trackpad users, on anyone using assistive input.
+
+---
+
+If you tell me which of these you're after — a genuinely hostile puzzle, an anti-scraping posture on a content site, fraud prevention on a real product, or a research probe into where agents break — I can get much more specific about what to build.

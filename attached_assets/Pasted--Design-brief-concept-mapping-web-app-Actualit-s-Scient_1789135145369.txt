@@ -1,0 +1,113 @@
+# Design brief: concept-mapping web app, "Actualités Scientifiques" edition
+
+## What we're building
+
+A concept-mapping tool for undergraduate philosophy courses. Students create nodes (concepts, claims, thinkers, arguments) and connect them with labeled edges (supports, refutes, presupposes, is-a-case-of). Instructors project maps in class and students build them collaboratively outside it. The core screen is an infinite canvas; everything else is chrome around it.
+
+## The reference
+
+Model the entire interface on the 1948 Hermann & Cie Paris edition of Norbert Wiener's *Cybernetics* — volume 1053 of the *Actualités Scientifiques et Industrielles* series. Cheap letterpress on rag paper, two ink colors, no illustrations, no photographs, no ornament that isn't structural. A scientific monograph cover from a French technical publisher, not a rare book and not a luxury object. It looks serious because it is indifferent to looking appealing.
+
+Study that specific artifact before you write code. The qualities to carry over:
+
+- Strict centered symmetry on a single vertical axis
+- A ruled rectangular frame containing everything, with geometric ornamental blocks at the four corners
+- Two inks only: vermillion and near-black, on unbleached paper
+- Hierarchy expressed through **size and letterspacing**, never through weight variation, color variety, or decoration
+- Condensed sans-serif capitals almost everywhere
+- Mixed type sizes *within* a single line — connecting words ("OR", "AND", "IN", "THE") set noticeably smaller than the nouns they join. This is the single most characteristic move on the cover and should appear in the app's own headings.
+- Metadata set very small and centered: credentials, addresses, dates, series numbers
+- A boxed printer's device — an interlocking monogram — used as the publisher's mark
+
+## Tokens
+
+### Color
+
+```
+--paper        #EDE4D2   /* unbleached stock, the base surface */
+--paper-aged   #E3D8C2   /* recessed panels, toolbar, inspector */
+--paper-edge   #D6C8AE   /* subtle vignette at canvas borders only */
+--vermillion   #C4441C   /* series ink: rules, frame, headings, active state */
+--vermillion-d #9C3415   /* hover/pressed only */
+--ink          #201C18   /* body text, node borders */
+--ink-soft     #5A5148   /* disabled, secondary metadata */
+```
+
+Do not drift toward #F4F1EA cream or a #D97757 terracotta accent. Those are a different, softer, much-used palette and they will read as generic. This paper is yellower and duller; this red is harder, closer to a printing-ink orange-red than to clay.
+
+Add a fixed, very low-opacity paper grain over the whole viewport (tiled noise or SVG turbulence, roughly 3–5% opacity) plus a faint uneven mottling. Restrained — the goal is "stock", not "distressed". Include a `prefers-reduced-motion`-independent user setting to turn texture off, because it interferes with projector legibility.
+
+Skip a dark mode unless asked. If one is required, invert to dense black paper with the same vermillion; do not make it grey.
+
+### Type
+
+One family, a condensed grotesque, used at every size. If licensing allows, Trade Gothic Condensed or Bureau Grot Condensed. Otherwise Archivo Narrow with Barlow Condensed as fallback. No serif anywhere. No monospace for data labels — that's a generic tell and the reference has none.
+
+```
+Series line   11px / caps / 0.22em tracking / vermillion
+App title     42px / caps / 0.06em tracking / vermillion
+Section head  20px / caps / 0.14em tracking / ink
+Connector     0.62× the size of the line it sits in (for OR / AND / IN / THE)
+Node title    15px / caps / 0.08em tracking / ink
+Edge label    10px / caps / 0.16em tracking / ink-soft
+Body / editor 15px / sentence case / 1.55 line-height / ink
+Metadata      9px / caps / 0.2em tracking / ink-soft
+```
+
+All-caps labels are normally a design cliché and I'd usually strike them. Here they're the point — but pay for them: give every caps run real letterspacing, and set body copy and the node editor in ordinary sentence case so the caps mean something.
+
+### Rules and frames
+
+Two weights only: 1px hairline and 3px heavy. The signature frame is a 3px rule with a 1px rule inset 4px inside it. No border-radius anywhere in the app, including inputs, buttons, and avatars. No box-shadows. No gradients. No blur or glass effects.
+
+Draw an interlocking geometric monogram from the app's initials, in the manner of the Hermann & Cie corner blocks — chunky, squared, art-deco, drawn as inline SVG. Use it at the four corners of the splash and print views, and alone as the app mark in the toolbar.
+
+## Screens
+
+### Splash / new-map screen
+
+Compose the whole thing as a title page, centered, maximum ~640px wide, with the double-rule frame and four corner monograms. Top line gives the series name and a volume number that increments with the user's map count — `MAPS DE PHILOSOPHIE · 0014`. App title in large vermillion caps. Beneath it the subtitle, set with the small connecting words: e.g. `A MACHINE FOR THE MAKING OF CONCEPTS AND THE TRACING OF THEIR RELATIONS`, with AND / OF / THE at 0.62×. Below, the boxed monogram. Below that, the course name and term in tiny caps, two columns like the Technology Press / John Wiley imprint pairing, and the year. Recent maps list under the frame, as a plain ruled table.
+
+### Canvas
+
+Paper fills the viewport. Optional faint letterpress registration marks at the canvas corners. Pan and zoom with no visible scrollbars.
+
+**Nodes** are rectangular plates: 1px ink border, paper fill, title in caps at top, body in sentence case beneath, a hairline rule between them. Selected state swaps the border to 3px vermillion and nothing else — no glow, no lift, no scale. Node types are distinguished by border treatment, not fill color: claim = solid, question = dashed, thinker = double rule, source = solid with a heavy top rule.
+
+**Edges** are 1px ink lines, orthogonal or gently curved, with the relation label set in tiny tracked caps on a small paper-colored plate that interrupts the line — as type interrupts a rule on a title page. Directional edges terminate in a small solid triangle, not an arrowhead glyph. Active/highlighted edges go vermillion.
+
+### Toolbar and inspector
+
+A single top bar on `--paper-aged`, separated from the canvas by a 3px vermillion rule. The monogram sits at the left. Tools are text labels in small tracked caps, not icons — if an icon is unavoidable, draw it as a geometric letterpress ornament rather than a rounded line icon. Active tool is vermillion with a 3px underline.
+
+Inspector docks right, on `--paper-aged`, separated by a 1px rule, with its own centered caps heading. Form fields are underlined only — a 1px ink rule under the input, going 3px vermillion on focus. No boxed inputs. No placeholder-as-label.
+
+### Buttons, menus, dialogs
+
+Buttons are text in tracked caps inside a 1px rule; primary action gets the 3px vermillion rule. Hover darkens the ink, doesn't fill or float. Dialogs are centered plates with the double-rule frame, a centered caps heading, and the corner monograms at reduced size. No backdrop blur — dim the canvas with a flat paper-toned scrim.
+
+Empty canvas reads as an instruction, not a mood: centered, small caps, e.g. `DOUBLE-CLICK THE PAGE TO SET YOUR FIRST CONCEPT`.
+
+### Print and export
+
+The aesthetic pays off here. A map exported to PDF should look like a plate from the series: framed, with a caption block in tiny caps giving the map title, author, course, and date. Make this genuinely good, not an afterthought — students will hand these in.
+
+## Motion
+
+Almost none. Letterpress doesn't animate. Permit only motion that reports a state change: a node appearing, a panel opening, a save confirming. 120ms, linear or ease-out, no bounce, no spring, no stagger. No entrance animations on page load. No hover transitions on nodes. Respect `prefers-reduced-motion` fully.
+
+## Non-negotiables
+
+- Nothing on screen may be a third color. Two inks plus paper.
+- No rounded corners, shadows, gradients, or glassmorphism.
+- No icon library. No emoji.
+- No decorative rule or ornament that doesn't separate two things.
+- Every all-caps run carries letterspacing of at least 0.08em.
+
+## Quality floor
+
+Ship this as a real tool, not a mood board. Full keyboard navigation with a clearly visible focus ring — use a 3px vermillion outline offset 2px, which fits the system. Verify contrast: vermillion on paper is around 4.4:1, so it is safe for large display type and for rules, but **never set body text, form labels, or anything under 18px in vermillion on paper** — those go in ink. Check the canvas at projector gamma, where the paper tone washes out; the texture toggle and a high-contrast mode are there for that. Responsive down to tablet; on phones, collapse the inspector to a bottom sheet that still respects the rules-and-frames system.
+
+## What I'm judging
+
+Whether someone who owns the Wiener volume would recognize the lineage without being told, and whether a student can build a twenty-node map in it without noticing the design at all. Both, or it hasn't worked.
