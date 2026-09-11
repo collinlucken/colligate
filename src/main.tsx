@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import archivoFontUrl from "./assets/ArchivoNarrow-Regular.ttf?url";
+import barlowFontUrl from "./assets/BarlowCondensed-Regular.ttf?url";
 import helpText from "../data/HELP.md?raw";
 import { diagnoseStructure } from "./engine";
 import { clipLineToRectangles, SVG_NODE_RECT_SIZE, SVG_VIEWBOX, scaleSizeToViewBox, type Size } from "./geometry";
@@ -16,6 +16,7 @@ import {
   type EditableState,
   type HistoryState,
 } from "./history";
+import { deleteSelection } from "./deletion";
 import "./index.css";
 
 type AnyMap = any;
@@ -316,6 +317,7 @@ function App() {
   const [helpTab, setHelpTab] = useState("students");
   const [showWork, setShowWork] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<string[]>([]);
+  const [selectedEdge, setSelectedEdge] = useState<string | null>(null);
   const [picker, setPicker] = useState<{ x: number; y: number } | null>(null);
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number; start: { x: number; y: number } } | null>(null);
   const [highlighted, setHighlighted] = useState<string[]>([]);
@@ -496,6 +498,26 @@ function App() {
     }));
     if (added) {
       setSelected([]);
+      setSelectedEdge(null);
+      setPicker(null);
+    }
+  };
+
+  const removeSelection = () => {
+    if (!selected.length && !selectedEdge) return;
+    const conceptIds = [...selected];
+    const propositionId = selectedEdge;
+    const currentMap = editableRef.current.map;
+    const action = conceptIds.length
+      ? `Removed ${conceptIds.length === 1 ? "concept" : "concepts"} "${conceptIds.map(id => conceptLabel(id, currentMap)).join(", ")}"`
+      : `Removed proposition "${propositionId}"`;
+    const removed = commitEdit(action, current => deleteSelection(current, {
+      conceptIds,
+      propositionId,
+    }));
+    if (removed) {
+      setSelected([]);
+      setSelectedEdge(null);
       setPicker(null);
     }
   };
@@ -568,6 +590,7 @@ function App() {
     setHistory(result.history);
     applyEditableState(result.state);
     setSelected([]);
+    setSelectedEdge(null);
     setPicker(null);
     lastEditAt.current = Date.now();
   };
@@ -583,6 +606,7 @@ function App() {
     setHistory(result.history);
     applyEditableState(result.state);
     setSelected([]);
+    setSelectedEdge(null);
     setPicker(null);
     lastEditAt.current = Date.now();
   };
@@ -611,11 +635,11 @@ function App() {
     setExportError("");
     try {
     // The local OFL font is embedded so the downloaded plate remains self-contained.
-    const fontResponse = await fetch(archivoFontUrl);
+    const fontResponse = await fetch(barlowFontUrl);
     const fontBytes = new Uint8Array(await fontResponse.arrayBuffer());
     let fontBinary = "";
     fontBytes.forEach(byte => { fontBinary += String.fromCharCode(byte); });
-    const fontStyle = `@font-face{font-family:Archivo;src:url(data:font/ttf;base64,${btoa(fontBinary)})}text{font-family:Archivo,sans-serif;font-weight:400;letter-spacing:1.2px}`;
+    const fontStyle = `@font-face{font-family:"Barlow Condensed";src:url(data:font/ttf;base64,${btoa(fontBinary)})}text{font-family:"Barlow Condensed",sans-serif;font-weight:400;letter-spacing:1px}`;
     const edges = map.propositions.map((proposition: any) => {
       const a = pos(proposition.subject, map.concepts.findIndex((concept: any) => concept.id === proposition.subject));
       const b = pos(proposition.object, map.concepts.findIndex((concept: any) => concept.id === proposition.object));
@@ -776,13 +800,13 @@ function App() {
       </section>
       <section className="pane canvas-pane">
         <div className="print-corners"><Corners /></div>
-        <div className="canvas-tools"><div className="eyebrow">Conceptual space</div><button className="btn inspector-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(true)}>Add concept / relation</button><button className="btn" onClick={autoLayout}>Auto-layout</button></div>
+        <div className="canvas-tools"><div className="eyebrow">Conceptual space</div><button className="btn inspector-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(true)}>Add concept / relation</button><button className="btn" onClick={autoLayout}>Auto-layout</button><button className="btn" onClick={removeSelection} disabled={!selected.length && !selectedEdge}>Remove</button></div>
         <div
           ref={canvasRef}
           className="canvas"
           onPointerMove={onPointerMove}
           onPointerUp={finishDrag}
-           onPointerCancel={finishDrag}
+          onPointerCancel={finishDrag}
           onDragOver={event => event.preventDefault()}
           onDrop={event => {
             event.preventDefault();
@@ -794,16 +818,23 @@ function App() {
           }}
           onClick={() => {
             setSelected([]);
+            setSelectedEdge(null);
             setPicker(null);
           }}
         >
           <svg ref={svgRef} viewBox="0 0 800 600" preserveAspectRatio="none">
-            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="var(--ink)" /></marker></defs>
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="var(--ink)" /></marker><marker id="arrow-selected" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="var(--vermillion)" /></marker></defs>
             {map.propositions.map((proposition: any) => {
               const a = pos(proposition.subject, map.concepts.findIndex((concept: any) => concept.id === proposition.subject));
               const b = pos(proposition.object, map.concepts.findIndex((concept: any) => concept.id === proposition.object));
               const edge = clippedEdge(proposition.subject, proposition.object);
-              return <g key={proposition.id}><line className={`edge ${highlighted.includes(proposition.id) ? "edge-highlight" : ""}`} markerEnd="url(#arrow)" x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} /><text className="edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 6} textAnchor="middle">{relationLabel(proposition.relation, relationBank, proposition.as_written?.relation)}</text></g>;
+              const edgeLabel = `${conceptLabel(proposition.subject, map)} ${relationLabel(proposition.relation, relationBank, proposition.as_written?.relation)} ${conceptLabel(proposition.object, map)} edge`;
+              const selectEdge = () => {
+                setSelected([]);
+                setPicker(null);
+                setSelectedEdge(proposition.id);
+              };
+              return <g key={proposition.id}><line className="edge-hit-target" aria-label={edgeLabel} role="button" tabIndex={0} aria-pressed={selectedEdge === proposition.id} x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} onFocus={selectEdge} onClick={event => { event.stopPropagation(); selectEdge(); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectEdge(); } }} /><line className={`edge ${highlighted.includes(proposition.id) || selectedEdge === proposition.id ? "edge-highlight" : ""}`} markerEnd={selectedEdge === proposition.id ? "url(#arrow-selected)" : "url(#arrow)"} x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} /><text className="edge-label" x={(a.x + b.x) / 2} y={(a.y + b.y) / 2 - 6} textAnchor="middle">{relationLabel(proposition.relation, relationBank, proposition.as_written?.relation)}</text></g>;
             })}
           </svg>
           {!map.concepts.length && <div className="empty"><div className="empty-inner"><Corners /><p>CONCEPT MAPS</p><h1>Concepts<br /><small>and</small> relations</h1><Monogram /><p>Conceptual space</p></div></div>}
@@ -839,6 +870,7 @@ function App() {
               }}
               onClick={event => {
                 event.stopPropagation();
+                 setSelectedEdge(null);
                 if (selected.includes(concept.id)) setSelected(selected.filter(id => id !== concept.id));
                 else if (selected.length === 1) {
                   setSelected([...selected, concept.id]);
