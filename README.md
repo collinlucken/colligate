@@ -60,7 +60,32 @@ python3 tools/build_pack.py && python3 tools/reference_engine.py > maps/expected
 
 ## What this deliberately leaves out of the hackathon build
 
-Yjs, the event log as source of truth, nested submaps, accounts, sync, PDF export, flashcards,
-Playwright. The brief calls several of these day-one foundations. For a 60-minute Agent build they
+Yjs, the event log as source of truth, nested submaps, accounts, sync, PDF export, flashcards.
+The brief calls several of these day-one foundations. For a 60-minute Agent build they
 are the difference between a working demo and none. Treat the session output as a spec validator
 and carry the data files forward into the real build.
+
+## Automated demo checks
+
+Run `npm run test:all` before a demonstration: it runs the deterministic engine and geometry checks,
+the Chromium browser suite, and the production build. Run `npm run test:browser` for just
+the browser checks, or `npm run test:browser -- --headed` to watch them.
+
+After `npm ci` on a new machine, run `npx playwright install chromium` (on Linux,
+`npx playwright install --with-deps chromium` if system libraries are missing). Replit uses
+its preinstalled Chromium automatically. To use another installed browser, set
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its executable path.
+
+The browser suite starts a dedicated Vite server on port 5001, which must be free. Each
+test uses a fresh browser context, so it never modifies your preview's saved map.
+
+Coverage follows the manual-authoring workflow: creating and filtering concept and relation
+banks; placing concepts; selecting nodes and creating arrows; moving nodes; focus editing;
+structure changes and show-your-work evidence; Help tabs; duplicate vocabulary handling;
+and local persistence of the map, banks, layout, propositions, session time, edit count,
+and drawn-arrow counter.
+
+Failures retain screenshots and traces in `test-results/`. Open the HTML report with
+`npx playwright show-report`, or inspect a trace with `npx playwright show-trace <trace.zip>`.
+Generated reports are ignored by Git. This suite targets desktop Chromium; it does not
+claim cross-browser coverage.

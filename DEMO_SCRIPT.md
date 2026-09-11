@@ -1,6 +1,8 @@
 # Five-minute showcase script
 
 Team showcases run 3 to 5 minutes. Rehearse once against the running app before showcases begin.
+Run `npm run test:all` first to check the automated manual-authoring flows; setup and failure-report
+instructions are in the README under **Automated demo checks**.
 Cut from the bottom. Beats 1 to 3 are the point; if only those work, the demo succeeded.
 
 **Opening line (10 s).** "Every concept-map tool on the market stores a picture. Ours stores

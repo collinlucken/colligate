@@ -8,7 +8,9 @@ COLLIGATE is a client-only React/Vite concept-map application. Students create t
 
 - Development preview: `npm run dev`
 - Production build: `npm run build`
-- Engine fixture tests: `npm test`
+- Engine and source-policy tests: `npm test`
+- Browser editing-flow tests: `npm run test:browser`
+- Full pre-demo check: `npm run test:all`
 
 The Replit workflow runs `npm run dev` on `0.0.0.0:5000`. Engine fixtures and example maps live in `data/`; the UI does not load them as a course pack.
 
