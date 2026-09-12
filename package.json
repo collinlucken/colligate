@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "build:site": "tsc -b && vite build --base /colligate/",
+    "build:site": "tsc -b && vite build --base /colligate-app/",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "test:browser": "playwright test",
     "test:all": "npm test && npm run test:browser && npm run build",
