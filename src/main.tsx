@@ -231,11 +231,56 @@ function normalizeRelationBank(raw: any[]): ManualRelation[] {
 }
 
 function download(name: string, contents: string, type = "application/json") {
+  const blob = new Blob([contents], { type: `${type};charset=utf-8` });
+  const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
-  anchor.href = URL.createObjectURL(new Blob([contents], { type }));
+  anchor.href = url;
   anchor.download = name;
+  anchor.rel = "noopener";
+  anchor.style.display = "none";
+  document.body.appendChild(anchor);
   anchor.click();
-  URL.revokeObjectURL(anchor.href);
+  window.setTimeout(() => {
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }, 2000);
+}
+
+async function plateFontCss(): Promise<string> {
+  const fallback = `text{font-family:"Barlow Condensed",sans-serif;font-weight:400;letter-spacing:1px}`;
+  try {
+    const response = await fetch(barlowFontUrl, { signal: AbortSignal.timeout(2500) });
+    if (!response.ok) return fallback;
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += 8192) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+    }
+    return `@font-face{font-family:"Barlow Condensed";src:url(data:font/ttf;base64,${btoa(binary)}) format("truetype")}${fallback}`;
+  } catch {
+    return fallback;
+  }
+}
+
+function printHtmlDocument(svg: string): string {
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Colligate map</title><style>@page{size:landscape;margin:10mm}html,body{margin:0;background:#EDE4D2}svg{display:block;width:100%;height:100vh}</style></head><body>${svg}</body></html>`;
+}
+
+function printMarkup(html: string) {
+  const frame = document.createElement("iframe");
+  frame.setAttribute("aria-hidden", "true");
+  frame.style.cssText = "position:fixed;width:0;height:0;border:0;right:0;bottom:0";
+  frame.srcdoc = html;
+  document.body.appendChild(frame);
+  frame.onload = () => {
+    try {
+      frame.contentWindow?.focus();
+      frame.contentWindow?.print();
+    } catch {
+      /* some preview frames block window.print */
+    }
+    window.setTimeout(() => frame.remove(), 2000);
+  };
 }
 
 function relationLabel(relation: any, relations: ManualRelation[], writtenLabel?: string): string {
@@ -294,6 +339,7 @@ function App() {
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [help, setHelp] = useState(false);
+  const [exportSheet, setExportSheet] = useState<null | { mode: "svg" | "print"; svg: string; fileUrl: string; printUrl: string }>(null);
   const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
   useEffect(() => {
     if (!help && !inspectorOpen) return;
@@ -644,15 +690,18 @@ function App() {
     return () => window.removeEventListener("keydown", onShortcut);
   }, [history]);
 
-  const exportSvg = async () => {
-    setExportError("");
-    try {
-    // The local OFL font is embedded so the downloaded plate remains self-contained.
-    const fontResponse = await fetch(barlowFontUrl);
-    const fontBytes = new Uint8Array(await fontResponse.arrayBuffer());
-    let fontBinary = "";
-    fontBytes.forEach(byte => { fontBinary += String.fromCharCode(byte); });
-    const fontStyle = `@font-face{font-family:"Barlow Condensed";src:url(data:font/ttf;base64,${btoa(fontBinary)})}text{font-family:"Barlow Condensed",sans-serif;font-weight:400;letter-spacing:1px}`;
+  const closeExportSheet = () => {
+    setExportSheet(current => {
+      if (current) {
+        URL.revokeObjectURL(current.fileUrl);
+        URL.revokeObjectURL(current.printUrl);
+      }
+      return null;
+    });
+  };
+
+  const buildPlateSvg = async () => {
+    const fontStyle = await plateFontCss();
     const edges = map.propositions.map((proposition: any) => {
       const a = pos(proposition.subject, map.concepts.findIndex((concept: any) => concept.id === proposition.subject));
       const b = pos(proposition.object, map.concepts.findIndex((concept: any) => concept.id === proposition.object));
@@ -665,10 +714,44 @@ function App() {
       return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" fill="#EDE4D2" stroke="#201C18" stroke-width="1"/><text x="70" y="27" text-anchor="middle" font-size="15" fill="#201C18">${label}</text></g>`;
     }).join("");
     const marks = [[10,10],[830,10],[10,680],[830,680]].map(([x,y]) => `<g transform="translate(${x} ${y}) scale(.5)" fill="#C4441C"><path fill-rule="evenodd" d="M0 0h40v40H0z M3 3v34h34V3z M8 8h24v7H15v10h17v7H8z M19 18h16v4H19z"/></g>`).join("");
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="#5A5148">COLLIGATE · CONCEPT MAPS · ${xmlEsc(new Date().toLocaleDateString())}</text>${marks}</svg>`;
-    download("colligate-map.svg", svg, "image/svg+xml");
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="#5A5148">COLLIGATE · CONCEPT MAPS · ${xmlEsc(new Date().toLocaleDateString())}</text>${marks}</svg>`;
+  };
+
+  const openExportSheet = (mode: "svg" | "print", svg: string) => {
+    setExportSheet(current => {
+      if (current) {
+        URL.revokeObjectURL(current.fileUrl);
+        URL.revokeObjectURL(current.printUrl);
+      }
+      return {
+        mode,
+        svg,
+        fileUrl: URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" })),
+        printUrl: URL.createObjectURL(new Blob([printHtmlDocument(svg)], { type: "text/html;charset=utf-8" })),
+      };
+    });
+  };
+
+  const exportSvg = async () => {
+    setExportError("");
+    try {
+      const svg = await buildPlateSvg();
+      download("colligate-map.svg", svg, "image/svg+xml");
+      openExportSheet("svg", svg);
     } catch {
-      setExportError("SVG export could not load the local font.");
+      setExportError("SVG export could not be built. Try again.");
+    }
+  };
+
+  const printMap = async () => {
+    setExportError("");
+    try {
+      const svg = await buildPlateSvg();
+      printMarkup(printHtmlDocument(svg));
+      try { window.print(); } catch { /* preview frames often block this */ }
+      openExportSheet("print", svg);
+    } catch {
+      setExportError("The printable map could not be built. Try again.");
     }
   };
 
@@ -778,7 +861,7 @@ function App() {
         <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
         <button className="btn primary" onClick={save}>Save map</button>
         <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
-        <button className="btn" onClick={() => window.print()}>Print / PDF</button>
+        <button className="btn" onClick={printMap}>Print / PDF</button>
         <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
         <a className="btn ghost" href="/">Collin Lucken</a>
       </div>
@@ -933,6 +1016,7 @@ function App() {
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
     {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" role="dialog" aria-modal="true" aria-label="Help" onKeyDown={event => { if (event.key === "Escape") setHelp(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button autoFocus className="btn" onClick={() => setHelp(false)}>Close</button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
+    {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1><p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
   </div>;
 }
 
