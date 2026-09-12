@@ -780,7 +780,7 @@ function App() {
         <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
         <button className="btn" onClick={() => window.print()}>Print / PDF</button>
         <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
-        <a className="btn ghost" href="/colligate/">About</a>
+        <a className="btn ghost" href="/">Collin Lucken</a>
       </div>
     </header>
     {exportError && <div className="storage-notice" role="alert">{exportError} <button className="btn" onClick={exportSvg}>Retry export</button></div>}
