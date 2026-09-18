@@ -1083,57 +1083,6 @@ function App() {
     </div>
     {exportError && <div className="storage-notice" role="alert">{exportError} <button className="btn" onClick={exportSvg}>Retry export</button></div>}
     <main className="workspace">
-      <section className="pane proposition-pane">
-        <button className="btn inspector-close" onClick={() => setInspectorOpen(false)}>Close inspector</button>
-        <div className="pane-head">
-          <div>
-            <div className="eyebrow">01 / propositions</div>
-          </div>
-          <span className="pill">{map.propositions.length} propositions</span>
-        </div>
-        {storageNotice && <div className="storage-notice" role="status">
-          An existing map was restored from older local storage. Its saved concepts and propositions are preserved; this workspace has empty user-created banks and never loads a course pack.
-          <button className="work" onClick={() => setStorageNotice(false)}>hide</button>
-        </div>}
-        <div className="proposition-list" aria-label="Read-only propositions">
-          {!map.propositions.length && <div className="proposition-empty">No propositions yet.</div>}
-          {map.propositions.map((proposition: any) => <div className="proposition" key={proposition.id}>
-            <span className="proposition-index">{proposition.id}</span>
-            <strong>{propositionText(proposition, map, relationBank)}</strong>
-          </div>)}
-        </div>
-        <div className="meta-line"><strong>About this map</strong> · {map.concepts.length} concepts · {map.propositions.length} propositions · built over {Math.floor((map.meta?.session_seconds || 0) / 60)} min · {map.meta?.edit_count || 0} edits · saved locally</div>
-        <div className="authoring">
-          <div className="eyebrow">Create Your Framework</div>
-          <form className="authoring-form" aria-label="Add concept" onSubmit={addConceptToBank}>
-            <label htmlFor="concept-label">Add concept</label>
-            <div className="form-row">
-              <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
-               <button className="btn small" type="submit">Add concept</button>
-            </div>
-          </form>
-          <div className="bank bank-inline">
-            <div className="bank-heading"><span className="eyebrow">Your concept bank · {conceptBank.length}</span><span className="subtle">Click or drag to place</span></div>
-            <div><label className="subtle" htmlFor="concept-search">Search concepts</label><input id="concept-search" className="search" value={query} onChange={event => setQuery(event.target.value)} /></div>
-            <div className="chips">
-              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas">{concept.label}</button>)}
-              {!conceptBank.length && <span className="bank-empty">No concepts yet. Add your first one above.</span>}
-              {!!conceptBank.length && !bank.length && <span className="bank-empty">No matching concepts.</span>}
-            </div>
-          </div>
-          <form className="authoring-form" aria-label="Add relation" onSubmit={addRelationToBank}>
-            <label htmlFor="relation-label">Add relation</label>
-            <div className="form-row">
-              <input id="relation-label" value={relationLabelInput} onChange={event => setRelationLabelInput(event.target.value)} placeholder="Relation label" />
-              <button className="btn small" type="submit">Add relation</button>
-            </div>
-          </form>
-          <div className="relation-bank"><span className="eyebrow">Your relation bank · {relationBank.length}</span><div className="chips">
-            {relationBank.map(relation => <span className="chip relation-chip" key={relation.id}>{relation.label}</span>)}
-            {!relationBank.length && <span className="bank-empty">No relations yet. Add one before connecting nodes.</span>}
-          </div></div>
-        </div>
-      </section>
       <section className="pane canvas-pane">
         <div className="print-corners"><Corners /></div>
         <div className="canvas-tools"><div className="eyebrow">Conceptual space</div><button className="btn inspector-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(true)}>Add concept / relation</button><button className="btn" onClick={autoLayout}>Auto-layout</button><button className="btn" onClick={removeSelection} disabled={!selected.length && !selectedEdge}>Remove</button></div>
@@ -1224,10 +1173,65 @@ function App() {
         </div>
         <div className="print-caption"><Monogram /><span>{map.title} · COLLIGATE · CONCEPT MAPS · {new Date().toLocaleDateString()}</span><Monogram /></div>
       </section>
+      <div className="side-column">
+        <button className="btn inspector-close" onClick={() => setInspectorOpen(false)}>Close inspector</button>
+        <div className="authoring">
+          <div className="eyebrow">Create Your Framework</div>
+          <form className="authoring-form" aria-label="Add concept" onSubmit={addConceptToBank}>
+            <label htmlFor="concept-label">Add concept</label>
+            <div className="form-row">
+              <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
+               <button className="btn small" type="submit">Add concept</button>
+            </div>
+          </form>
+          <div className="bank bank-inline">
+            <div className="bank-heading"><span className="eyebrow">Your concept bank · {conceptBank.length}</span><span className="subtle">Click or drag to place</span></div>
+            <div><label className="subtle" htmlFor="concept-search">Search concepts</label><input id="concept-search" className="search" value={query} onChange={event => setQuery(event.target.value)} /></div>
+            <div className="chips">
+              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas">{concept.label}</button>)}
+              {!conceptBank.length && <span className="bank-empty">No concepts yet. Add your first one above.</span>}
+              {!!conceptBank.length && !bank.length && <span className="bank-empty">No matching concepts.</span>}
+            </div>
+          </div>
+          <form className="authoring-form" aria-label="Add relation" onSubmit={addRelationToBank}>
+            <label htmlFor="relation-label">Add relation</label>
+            <div className="form-row">
+              <input id="relation-label" value={relationLabelInput} onChange={event => setRelationLabelInput(event.target.value)} placeholder="Relation label" />
+              <button className="btn small" type="submit">Add relation</button>
+            </div>
+          </form>
+          <div className="relation-bank"><span className="eyebrow">Your relation bank · {relationBank.length}</span><div className="chips">
+            {relationBank.map(relation => <span className="chip relation-chip" key={relation.id}>{relation.label}</span>)}
+            {!relationBank.length && <span className="bank-empty">No relations yet. Add one before connecting nodes.</span>}
+          </div></div>
+        </div>
+        <div className="side-scroll">
+      <section className="pane proposition-pane">
+        <div className="pane-head">
+          <div>
+            <div className="eyebrow">01 / propositions</div>
+          </div>
+          <span className="pill">{map.propositions.length} propositions</span>
+        </div>
+        {storageNotice && <div className="storage-notice" role="status">
+          An existing map was restored from older local storage. Its saved concepts and propositions are preserved; this workspace has empty user-created banks and never loads a course pack.
+          <button className="work" onClick={() => setStorageNotice(false)}>hide</button>
+        </div>}
+        <div className="proposition-list" aria-label="Read-only propositions">
+          {!map.propositions.length && <div className="proposition-empty">No propositions yet.</div>}
+          {map.propositions.map((proposition: any) => <div className="proposition" key={proposition.id}>
+            <span className="proposition-index">{proposition.id}</span>
+            <strong>{propositionText(proposition, map, relationBank)}</strong>
+          </div>)}
+        </div>
+        <div className="meta-line"><strong>About this map</strong> · {map.concepts.length} concepts · {map.propositions.length} propositions · built over {Math.floor((map.meta?.session_seconds || 0) / 60)} min · {map.meta?.edit_count || 0} edits · saved locally</div>
+      </section>
       <aside className="pane right-pane">
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">03 / structure</div><h2>What shape is this?</h2></div><button className="work" onClick={() => toggle("structure")}>{showWork.structure ? "hide" : "show your work"}</button></div><div className="metric-grid"><div className="metric"><strong>{structure?.concepts ?? map.concepts.length}</strong><span>concepts</span></div><div className="metric"><strong>{structure?.propositions ?? map.propositions.length}</strong><span>propositions</span></div><div className="metric"><strong>{structure?.components ?? "—"}</strong><span>components</span></div><div className="metric"><strong>{structure?.density !== undefined ? Number(structure.density).toFixed(2) : "—"}</strong><span>density</span></div></div><p className="observation">Shape: <strong>{structure?.label || "tree"}</strong>. {structure?.orphans?.length ? `${structure.orphans.length} concepts are not connected yet.` : "Every concept is part of the conversation."}</p>{panelWork("structure", structure?.derivation)}</div>
           <div className="panel timeline-panel"><div className="panel-title"><h2>Map history</h2><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.slice().reverse().map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp} title={displayTimestamp(event.timestamp)}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
       </aside>
+        </div>
+      </div>
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
     {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1>{assignmentReport && <div className={`export-status ${assignmentReport.passed ? "pass" : "fail"}`} role="status"><strong>{assignmentReport.passed ? "This map meets the assignment requirements." : "This map does not meet the assignment requirements."}</strong><ul>{assignmentReport.checks.map(check => <li key={check.id}>{check.ok ? "✓" : "✕"} {check.label} — {check.detail}</li>)}</ul>{!assignmentReport.passed && <p>You can still download or print; the plate is stamped NEEDS WORK.</p>}</div>}<p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
