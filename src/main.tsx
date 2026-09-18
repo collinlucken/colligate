@@ -1216,7 +1216,7 @@ function App() {
               }}
             >{concept.label}</div>;
           })}
-          {picker && <div className="picker" role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
+          {picker && <div className={`picker ${picker.y > 360 ? "picker-above" : ""}`} role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
             <h4>Choose one of your relations</h4>
             {!relationBank.length && <div className="picker-empty">No relations in your bank.</div>}
             {relationBank.map(relation => <button key={relation.id} onClick={() => addRelation(relation)}>{relation.label}</button>)}
