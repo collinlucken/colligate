@@ -1104,7 +1104,7 @@ function App() {
         </div>
         <div className="meta-line"><strong>About this map</strong> · {map.concepts.length} concepts · {map.propositions.length} propositions · built over {Math.floor((map.meta?.session_seconds || 0) / 60)} min · {map.meta?.edit_count || 0} edits · saved locally</div>
         <div className="authoring">
-          <div className="eyebrow">Create your vocabulary</div>
+          <div className="eyebrow">Create Your Framework</div>
           <form className="authoring-form" aria-label="Add concept" onSubmit={addConceptToBank}>
             <label htmlFor="concept-label">Add concept</label>
             <div className="form-row">
