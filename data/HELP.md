@@ -60,6 +60,14 @@ The structure statistic has a **show your work** toggle. Press it to see the exa
 counts and deterministic calculation behind the description. The application does not
 judge whether a proposition is true; that judgment belongs to you.
 
+### Assignment codes
+
+If your instructor writes a code on the board, enter it in **Assignment code**. That
+loads the guiding question and the requirements for the map. If the assignment has a
+time limit, the timer starts when you press **Enter**. Export and print then
+tell you whether the map meets those requirements. A map that does not yet meet them
+can still be downloaded; it is stamped NEEDS WORK.
+
 ---
 
 ## For instructors
@@ -81,13 +89,20 @@ working map is assembled in the canvas.
 
 ### Running an assignment
 
-1. Tell students the focus question and any rules about the number or kinds of concepts
-   and relations.
-2. Students enter their own labels, place nodes, connect pairs, and press **Save map**.
-3. Students submit the `.map.json` file wherever you collect work. Use the Structure
-   panel and inspect the saved propositions yourself.
-4. Grade content and reasoning yourself. COLLIGATE reports graph structure; it does not
-   decide whether a statement is true.
+1. Create the assignment with **Create assignment**, or add it to the published catalog
+   (`src/assignments.catalog.json`) with a short chalkboard code such as `MIND1`.
+2. Write the code on the board. Students enter it; COLLIGATE sets the focus question,
+   starts the timer, and shows the live checklist (unique concepts, unique relations,
+   connection count, time limit, required labels, and whether the map is connected).
+   Re-entering the same code in the same browser resumes the original start time.
+3. Students build the map themselves and export SVG or print PDF. A map that meets the
+   requirements is stamped MEETS REQUIREMENTS. One that does not is stamped NEEDS WORK
+   and lists the failed rules. Content and truth-value are still yours to grade.
+4. **Use this assignment** saves the code in this browser only. To give a class a short
+   code, publish it in the catalog. A share ticket (`CG:...`) encodes the same assignment
+   for a slide or LMS if you do not want to republish.
+
+DEMO and MIND1 ship as practice codes.
 
 ### Local data and older maps
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import barlowFontUrl from "./assets/BarlowCondensed-Regular.ttf?url";
-import helpText from "../data/HELP.md?raw";
 import { diagnoseStructure } from "./engine";
 import { clipLineToRectangles, SVG_NODE_RECT_SIZE, SVG_VIEWBOX, scaleSizeToViewBox, type Size } from "./geometry";
 import {
@@ -17,6 +16,18 @@ import {
   type HistoryState,
 } from "./history";
 import { deleteSelection } from "./deletion";
+import catalog from "./assignments.catalog.json";
+import {
+  encodeTicket,
+  evaluateAssignment,
+  failedSummary,
+  formatClock,
+  lookupAssignment,
+  mergeCatalog,
+  normalizeAssignment,
+  normalizeCode,
+  type Assignment,
+} from "./assignments";
 import "./index.css";
 
 type AnyMap = any;
@@ -41,6 +52,9 @@ const MANUAL_MAP_STORAGE = "weft-manual-map";
 const MANUAL_CONCEPT_BANK_STORAGE = "weft-manual-concept-bank";
 const MANUAL_RELATION_BANK_STORAGE = "weft-manual-relation-bank";
 const MANUAL_HISTORY_STORAGE = "weft-manual-history";
+const LOCAL_ASSIGNMENTS_STORAGE = "weft-assignment-catalog";
+const ACTIVE_ASSIGNMENT_STORAGE = "weft-assignment-code";
+const ASSIGNMENT_STARTS_STORAGE = "weft-assignment-starts";
 const LEGACY_MAP_STORAGE = "weft-map";
 
 const emptyManualPack = {
@@ -158,6 +172,103 @@ function readStoredHistory(): HistoryState {
   } catch {
     return createHistoryState();
   }
+}
+
+function bundledAssignments(): Assignment[] {
+  return mergeCatalog((catalog as Assignment[]) || [], []);
+}
+
+function readLocalAssignments(): Assignment[] {
+  try {
+    const stored = localStorage.getItem(LOCAL_ASSIGNMENTS_STORAGE);
+    if (!stored) return [];
+    const value = JSON.parse(stored);
+    return Array.isArray(value) ? mergeCatalog([], value) : [];
+  } catch {
+    return [];
+  }
+}
+
+function allAssignments(): Assignment[] {
+  return mergeCatalog(bundledAssignments(), readLocalAssignments());
+}
+
+function saveLocalAssignment(assignment: Assignment) {
+  const next = mergeCatalog(readLocalAssignments(), [assignment]);
+  localStorage.setItem(LOCAL_ASSIGNMENTS_STORAGE, JSON.stringify(next));
+}
+
+function readAssignmentStarts(): Record<string, number> {
+  try {
+    const stored = localStorage.getItem(ASSIGNMENT_STARTS_STORAGE);
+    if (!stored) return {};
+    const value = JSON.parse(stored);
+    if (!value || typeof value !== "object") return {};
+    return Object.fromEntries(Object.entries(value).filter(([, started]) => Number.isFinite(Number(started))).map(([code, started]) => [code, Number(started)]));
+  } catch {
+    return {};
+  }
+}
+
+function startAssignmentClock(code: string, now = Date.now()): number {
+  const key = normalizeCode(code);
+  const starts = readAssignmentStarts();
+  if (!starts[key]) {
+    starts[key] = now;
+    localStorage.setItem(ASSIGNMENT_STARTS_STORAGE, JSON.stringify(starts));
+  }
+  return starts[key];
+}
+
+type AssignmentDraft = {
+  code: string;
+  title: string;
+  focus_question: string;
+  minConcepts: string;
+  maxConcepts: string;
+  minPropositions: string;
+  minUniqueRelations: string;
+  minDegree: string;
+  timeLimitMinutes: string;
+  requireConnected: boolean;
+  requiredConcepts: string;
+  requiredRelations: string;
+};
+
+function emptyAssignmentDraft(): AssignmentDraft {
+  return {
+    code: "",
+    title: "",
+    focus_question: "",
+    minConcepts: "",
+    maxConcepts: "",
+    minPropositions: "",
+    minUniqueRelations: "",
+    minDegree: "",
+    timeLimitMinutes: "",
+    requireConnected: false,
+    requiredConcepts: "",
+    requiredRelations: "",
+  };
+}
+
+function draftToAssignment(draft: AssignmentDraft): Assignment | null {
+  return normalizeAssignment({
+    code: draft.code,
+    title: draft.title,
+    focus_question: draft.focus_question,
+    requirements: {
+      minConcepts: draft.minConcepts,
+      maxConcepts: draft.maxConcepts,
+      minPropositions: draft.minPropositions,
+      minUniqueRelations: draft.minUniqueRelations,
+      minDegree: draft.minDegree,
+      timeLimitMinutes: draft.timeLimitMinutes,
+      requireConnected: draft.requireConnected,
+      requiredConcepts: draft.requiredConcepts,
+      requiredRelations: draft.requiredRelations,
+    },
+  });
 }
 
 function slug(value: string): string {
@@ -338,17 +449,24 @@ function App() {
   const [conceptLabelInput, setConceptLabelInput] = useState("");
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
-  const [help, setHelp] = useState(false);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [assignmentStartedAt, setAssignmentStartedAt] = useState<number | null>(null);
+  const [now, setNow] = useState(Date.now());
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [assignmentDraft, setAssignmentDraft] = useState(emptyAssignmentDraft);
+  const [ticketCopied, setTicketCopied] = useState("");
   const [exportSheet, setExportSheet] = useState<null | { mode: "svg" | "print"; svg: string; fileUrl: string; printUrl: string }>(null);
   const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
   useEffect(() => {
-    if (!help && !inspectorOpen) return;
+    if (!inspectorOpen) return;
     const previous = document.activeElement as HTMLElement | null;
-    const panel = document.querySelector(help ? ".modal" : ".proposition-pane");
+    const panel = document.querySelector(".proposition-pane");
     const controls = () => Array.from(panel?.querySelectorAll<HTMLElement>('button:not(:disabled), input, [tabindex="0"]') || []);
     controls()[0]?.focus();
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setHelp(false); setInspectorOpen(false); }
+      if (event.key === "Escape") setInspectorOpen(false);
       if (event.key !== "Tab") return;
       const items = controls();
       const first = items[0], last = items[items.length - 1];
@@ -357,8 +475,7 @@ function App() {
     };
     document.addEventListener("keydown", handleKey);
     return () => { document.removeEventListener("keydown", handleKey); previous?.focus(); };
-  }, [help, inspectorOpen]);
-  const [helpTab, setHelpTab] = useState("students");
+  }, [inspectorOpen]);
   const [showWork, setShowWork] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedEdge, setSelectedEdge] = useState<string | null>(null);
@@ -461,6 +578,62 @@ function App() {
   }, []);
 
   const structure: any = useMemo(() => diagnoseStructure(map, manualPack as any), [map, manualPack]);
+  const assignmentReport = useMemo(
+    () => assignment ? evaluateAssignment(assignment, map, { startedAt: assignmentStartedAt ?? undefined, now }) : null,
+    [assignment, map, assignmentStartedAt, now],
+  );
+
+  useEffect(() => {
+    if (!assignment) return;
+    const tick = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(tick);
+  }, [assignment]);
+
+  const applyAssignment = (next: Assignment) => {
+    const startedAt = startAssignmentClock(next.code);
+    setAssignment(next);
+    setAssignmentStartedAt(startedAt);
+    setNow(Date.now());
+    setCodeInput(next.code);
+    setCodeError("");
+    localStorage.setItem(ACTIVE_ASSIGNMENT_STORAGE, next.code);
+    const current = editableRef.current;
+    if ((current.map.focus_question || "") !== next.focus_question) {
+      const nextMap = { ...current.map, focus_question: next.focus_question };
+      editableRef.current = { ...current, map: nextMap };
+      mapRef.current = nextMap;
+      setMap(nextMap);
+    }
+    focusEditingRef.current = false;
+    focusDraftRef.current = next.focus_question;
+    setFocusDraft(next.focus_question);
+  };
+
+  const leaveAssignment = () => {
+    setAssignment(null);
+    setAssignmentStartedAt(null);
+    setCodeInput("");
+    setCodeError("");
+    localStorage.removeItem(ACTIVE_ASSIGNMENT_STORAGE);
+  };
+
+  const submitAssignmentCode = (event?: React.FormEvent) => {
+    event?.preventDefault();
+    const found = lookupAssignment(codeInput, allAssignments());
+    if (!found) {
+      setCodeError("No assignment for that code.");
+      return;
+    }
+    applyAssignment(found);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("code") || params.get("a") || localStorage.getItem(ACTIVE_ASSIGNMENT_STORAGE) || "";
+    if (!requested) return;
+    const found = lookupAssignment(requested, allAssignments());
+    if (found) applyAssignment(found);
+  }, []);
   const bank = useMemo(
     () => conceptBank.filter(concept => concept.label.toLowerCase().includes(query.toLowerCase())).slice(0, 24),
     [conceptBank, query],
@@ -714,7 +887,14 @@ function App() {
       return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" fill="#EDE4D2" stroke="#201C18" stroke-width="1"/><text x="70" y="27" text-anchor="middle" font-size="15" fill="#201C18">${label}</text></g>`;
     }).join("");
     const marks = [[10,10],[830,10],[10,680],[830,680]].map(([x,y]) => `<g transform="translate(${x} ${y}) scale(.5)" fill="#C4441C"><path fill-rule="evenodd" d="M0 0h40v40H0z M3 3v34h34V3z M8 8h24v7H15v10h17v7H8z M19 18h16v4H19z"/></g>`).join("");
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="#5A5148">COLLIGATE · CONCEPT MAPS · ${xmlEsc(new Date().toLocaleDateString())}</text>${marks}</svg>`;
+    const statusFill = assignmentReport && !assignmentReport.passed ? "#C4441C" : assignmentReport?.passed ? "#2C5A3C" : "#5A5148";
+    const rawStatus = assignmentReport
+      ? assignmentReport.passed
+        ? `COLLIGATE · ${assignmentReport.assignment.code.toUpperCase()} · MEETS REQUIREMENTS · ${new Date().toLocaleDateString()}`
+        : `COLLIGATE · ${assignmentReport.assignment.code.toUpperCase()} · NEEDS WORK · ${failedSummary(assignmentReport)}`
+      : `COLLIGATE · CONCEPT MAPS · ${new Date().toLocaleDateString()}`;
+    const status = xmlEsc(rawStatus.length > 160 ? `${rawStatus.slice(0, 157)}...` : rawStatus);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="${statusFill}">${status}</text>${marks}</svg>`;
   };
 
   const openExportSheet = (mode: "svg" | "print", svg: string) => {
@@ -736,7 +916,7 @@ function App() {
     setExportError("");
     try {
       const svg = await buildPlateSvg();
-      download("colligate-map.svg", svg, "image/svg+xml");
+      if (!assignmentReport || assignmentReport.passed) download("colligate-map.svg", svg, "image/svg+xml");
       openExportSheet("svg", svg);
     } catch {
       setExportError("SVG export could not be built. Try again.");
@@ -747,8 +927,10 @@ function App() {
     setExportError("");
     try {
       const svg = await buildPlateSvg();
-      printMarkup(printHtmlDocument(svg));
-      try { window.print(); } catch { /* preview frames often block this */ }
+      if (!assignmentReport || assignmentReport.passed) {
+        printMarkup(printHtmlDocument(svg));
+        try { window.print(); } catch { /* preview frames often block this */ }
+      }
       openExportSheet("print", svg);
     } catch {
       setExportError("The printable map could not be built. Try again.");
@@ -842,83 +1024,65 @@ function App() {
   const panelWork = (id: string, derivation: any) => showWork[id]
     ? <div className="derivation">{Array.isArray(derivation) ? derivation.join("\n") : String(derivation || "Counted directly from the propositions you added.")}</div>
     : null;
-  const helpSection = (section: "students" | "instructors") => {
-    const heading = section === "students" ? "## For students" : "## For instructors";
-    const other = section === "students" ? "## For instructors" : "## For students";
-    const start = helpText.indexOf(heading);
-    const end = helpText.indexOf(other, start + heading.length);
-    return helpText.slice(start + heading.length, end < 0 ? undefined : end).trim();
-  };
+  const elapsedMs = assignmentStartedAt ? Math.max(0, now - assignmentStartedAt) : 0;
+  const limitMs = (assignment?.requirements.timeLimitMinutes || 0) * 60_000;
+  const timeExpired = !!limitMs && elapsedMs > limitMs;
+  const timerFace = !assignmentStartedAt ? "" : limitMs
+    ? timeExpired ? formatClock(elapsedMs - limitMs) : formatClock(limitMs - elapsedMs)
+    : formatClock(elapsedMs);
+  const timerCaption = !limitMs ? "elapsed" : timeExpired ? "over time" : "remaining";
 
   return <div className={`shell textured ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
     <header className="topbar">
       <div className="app-mark"><Monogram /></div>
       <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
       <div className="edition">Concepts <small>&amp;</small> relations</div>
-      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
+      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} readOnly={!!assignment} title={assignment ? `Set by assignment ${assignment.code}` : undefined} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
       <div className="toolbar">
         <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action">Undo</button>
         <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
         <button className="btn primary" onClick={save}>Save map</button>
         <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
         <button className="btn" onClick={printMap}>Print / PDF</button>
-        <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
         <a className="btn ghost" href="/">Collin Lucken</a>
       </div>
     </header>
+    <div className="assignment-bar">
+      {assignment && assignmentReport ? (
+        <div className={`assignment-card ${assignmentReport.passed ? "pass" : "fail"}`}>
+          <div className="assignment-head">
+            <div>
+              <div className="eyebrow">Assignment {assignment.code}</div>
+              <strong>{assignment.title || assignment.focus_question}</strong>
+            </div>
+            {timerFace && <div className={`assignment-timer ${timeExpired ? "expired" : ""}`} role="timer" aria-live="polite"><span>{timerFace}</span><small>{timerCaption}{limitMs ? ` · ${assignment.requirements.timeLimitMinutes} min` : ""}</small></div>}
+            <div className="assignment-actions">
+              <span className={`assignment-mark ${assignmentReport.passed ? "pass" : "fail"}`}>{assignmentReport.passed ? "Meets requirements" : "Does not meet requirements"}</span>
+              <button className="btn ghost" onClick={() => { setAssignmentDraft(emptyAssignmentDraft()); setTicketCopied(""); setComposerOpen(true); }}>Create assignment</button>
+              <button className="btn ghost" onClick={leaveAssignment}>Leave</button>
+            </div>
+          </div>
+          <ol className="requirement-list">
+            {assignmentReport.checks.map(check => (
+              <li key={check.id} className={check.ok ? "ok" : "miss"}>
+                <span aria-hidden="true">{check.ok ? "✓" : "✕"}</span>
+                <span>{check.label} <em>{check.detail}</em></span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : (
+        <form className="assignment-entry" aria-label="Assignment code" onSubmit={submitAssignmentCode}>
+          <label htmlFor="assignment-code">Assignment code</label>
+          <input id="assignment-code" value={codeInput} onChange={event => { setCodeInput(event.target.value); setCodeError(""); }} placeholder="Code from the board" autoComplete="off" />
+          <button className="btn primary" type="submit">Enter</button>
+          <button className="btn ghost" type="button" onClick={() => { setAssignmentDraft(emptyAssignmentDraft()); setTicketCopied(""); setComposerOpen(true); }}>Create assignment</button>
+          {codeError && <p className="assignment-error" role="alert">{codeError}</p>}
+        </form>
+      )}
+    </div>
     {exportError && <div className="storage-notice" role="alert">{exportError} <button className="btn" onClick={exportSvg}>Retry export</button></div>}
     <main className="workspace">
-      <section className="pane proposition-pane">
-        <button className="btn inspector-close" onClick={() => setInspectorOpen(false)}>Close inspector</button>
-        <div className="pane-head">
-          <div>
-            <div className="eyebrow">01 / propositions</div>
-          </div>
-          <span className="pill">{map.propositions.length} propositions</span>
-        </div>
-        {storageNotice && <div className="storage-notice" role="status">
-          An existing map was restored from older local storage. Its saved concepts and propositions are preserved; this workspace has empty user-created banks and never loads a course pack.
-          <button className="work" onClick={() => setStorageNotice(false)}>hide</button>
-        </div>}
-        <div className="proposition-list" aria-label="Read-only propositions">
-          {!map.propositions.length && <div className="proposition-empty">No propositions yet.</div>}
-          {map.propositions.map((proposition: any) => <div className="proposition" key={proposition.id}>
-            <span className="proposition-index">{proposition.id}</span>
-            <strong>{propositionText(proposition, map, relationBank)}</strong>
-          </div>)}
-        </div>
-        <div className="meta-line"><strong>About this map</strong> · {map.concepts.length} concepts · {map.propositions.length} propositions · built over {Math.floor((map.meta?.session_seconds || 0) / 60)} min · {map.meta?.edit_count || 0} edits · saved locally</div>
-        <div className="authoring">
-          <div className="eyebrow">Create your vocabulary</div>
-          <form className="authoring-form" aria-label="Add concept" onSubmit={addConceptToBank}>
-            <label htmlFor="concept-label">Add concept</label>
-            <div className="form-row">
-              <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
-               <button className="btn small" type="submit">Add concept</button>
-            </div>
-          </form>
-          <div className="bank bank-inline">
-            <div className="bank-heading"><span className="eyebrow">Your concept bank · {conceptBank.length}</span><span className="subtle">Click or drag to place</span></div>
-            <div><label className="subtle" htmlFor="concept-search">Search concepts</label><input id="concept-search" className="search" value={query} onChange={event => setQuery(event.target.value)} /></div>
-            <div className="chips">
-              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas">{concept.label}</button>)}
-              {!conceptBank.length && <span className="bank-empty">No concepts yet. Add your first one above.</span>}
-              {!!conceptBank.length && !bank.length && <span className="bank-empty">No matching concepts.</span>}
-            </div>
-          </div>
-          <form className="authoring-form" aria-label="Add relation" onSubmit={addRelationToBank}>
-            <label htmlFor="relation-label">Add relation</label>
-            <div className="form-row">
-              <input id="relation-label" value={relationLabelInput} onChange={event => setRelationLabelInput(event.target.value)} placeholder="Relation label" />
-              <button className="btn small" type="submit">Add relation</button>
-            </div>
-          </form>
-          <div className="relation-bank"><span className="eyebrow">Your relation bank · {relationBank.length}</span><div className="chips">
-            {relationBank.map(relation => <span className="chip relation-chip" key={relation.id}>{relation.label}</span>)}
-            {!relationBank.length && <span className="bank-empty">No relations yet. Add one before connecting nodes.</span>}
-          </div></div>
-        </div>
-      </section>
       <section className="pane canvas-pane">
         <div className="print-corners"><Corners /></div>
         <div className="canvas-tools"><div className="eyebrow">Conceptual space</div><button className="btn inspector-toggle" aria-expanded={inspectorOpen} onClick={() => setInspectorOpen(true)}>Add concept / relation</button><button className="btn" onClick={autoLayout}>Auto-layout</button><button className="btn" onClick={removeSelection} disabled={!selected.length && !selectedEdge}>Remove</button></div>
@@ -1001,7 +1165,7 @@ function App() {
               }}
             >{concept.label}</div>;
           })}
-          {picker && <div className="picker" role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
+          {picker && <div className={`picker ${picker.y > 360 ? "picker-above" : ""}`} role="dialog" aria-label="Choose a relation" style={{ left: `${picker.x / 8}%`, top: `${picker.y / 6}%` }} onClick={event => event.stopPropagation()}>
             <h4>Choose one of your relations</h4>
             {!relationBank.length && <div className="picker-empty">No relations in your bank.</div>}
             {relationBank.map(relation => <button key={relation.id} onClick={() => addRelation(relation)}>{relation.label}</button>)}
@@ -1009,14 +1173,69 @@ function App() {
         </div>
         <div className="print-caption"><Monogram /><span>{map.title} · COLLIGATE · CONCEPT MAPS · {new Date().toLocaleDateString()}</span><Monogram /></div>
       </section>
+      <div className="side-column">
+        <button className="btn inspector-close" onClick={() => setInspectorOpen(false)}>Close inspector</button>
+        <div className="authoring">
+          <div className="eyebrow">Create Your Framework</div>
+          <form className="authoring-form" aria-label="Add concept" onSubmit={addConceptToBank}>
+            <label htmlFor="concept-label">Add concept</label>
+            <div className="form-row">
+              <input id="concept-label" value={conceptLabelInput} onChange={event => setConceptLabelInput(event.target.value)} placeholder="Concept label" />
+               <button className="btn small" type="submit">Add concept</button>
+            </div>
+          </form>
+          <div className="bank bank-inline">
+            <div className="bank-heading"><span className="eyebrow">Your concept bank · {conceptBank.length}</span><span className="subtle">Click or drag to place</span></div>
+            <div><label className="subtle" htmlFor="concept-search">Search concepts</label><input id="concept-search" className="search" value={query} onChange={event => setQuery(event.target.value)} /></div>
+            <div className="chips">
+              {bank.map(concept => <button className="chip" draggable key={concept.id} onDragStart={event => event.dataTransfer.setData("application/x-weft-concept", concept.id)} onClick={() => addConcept(concept)} title="Click or drag onto canvas">{concept.label}</button>)}
+              {!conceptBank.length && <span className="bank-empty">No concepts yet. Add your first one above.</span>}
+              {!!conceptBank.length && !bank.length && <span className="bank-empty">No matching concepts.</span>}
+            </div>
+          </div>
+          <form className="authoring-form" aria-label="Add relation" onSubmit={addRelationToBank}>
+            <label htmlFor="relation-label">Add relation</label>
+            <div className="form-row">
+              <input id="relation-label" value={relationLabelInput} onChange={event => setRelationLabelInput(event.target.value)} placeholder="Relation label" />
+              <button className="btn small" type="submit">Add relation</button>
+            </div>
+          </form>
+          <div className="relation-bank"><span className="eyebrow">Your relation bank · {relationBank.length}</span><div className="chips">
+            {relationBank.map(relation => <span className="chip relation-chip" key={relation.id}>{relation.label}</span>)}
+            {!relationBank.length && <span className="bank-empty">No relations yet. Add one before connecting nodes.</span>}
+          </div></div>
+        </div>
+        <div className="side-scroll">
+      <section className="pane proposition-pane">
+        <div className="pane-head">
+          <div>
+            <div className="eyebrow">01 / propositions</div>
+          </div>
+          <span className="pill">{map.propositions.length} propositions</span>
+        </div>
+        {storageNotice && <div className="storage-notice" role="status">
+          An existing map was restored from older local storage. Its saved concepts and propositions are preserved; this workspace has empty user-created banks and never loads a course pack.
+          <button className="work" onClick={() => setStorageNotice(false)}>hide</button>
+        </div>}
+        <div className="proposition-list" aria-label="Read-only propositions">
+          {!map.propositions.length && <div className="proposition-empty">No propositions yet.</div>}
+          {map.propositions.map((proposition: any) => <div className="proposition" key={proposition.id}>
+            <span className="proposition-index">{proposition.id}</span>
+            <strong>{propositionText(proposition, map, relationBank)}</strong>
+          </div>)}
+        </div>
+        <div className="meta-line"><strong>About this map</strong> · {map.concepts.length} concepts · {map.propositions.length} propositions · built over {Math.floor((map.meta?.session_seconds || 0) / 60)} min · {map.meta?.edit_count || 0} edits · saved locally</div>
+      </section>
       <aside className="pane right-pane">
         <div className="panel"><div className="panel-title"><div><div className="eyebrow">03 / structure</div><h2>What shape is this?</h2></div><button className="work" onClick={() => toggle("structure")}>{showWork.structure ? "hide" : "show your work"}</button></div><div className="metric-grid"><div className="metric"><strong>{structure?.concepts ?? map.concepts.length}</strong><span>concepts</span></div><div className="metric"><strong>{structure?.propositions ?? map.propositions.length}</strong><span>propositions</span></div><div className="metric"><strong>{structure?.components ?? "—"}</strong><span>components</span></div><div className="metric"><strong>{structure?.density !== undefined ? Number(structure.density).toFixed(2) : "—"}</strong><span>density</span></div></div><p className="observation">Shape: <strong>{structure?.label || "tree"}</strong>. {structure?.orphans?.length ? `${structure.orphans.length} concepts are not connected yet.` : "Every concept is part of the conversation."}</p>{panelWork("structure", structure?.derivation)}</div>
           <div className="panel timeline-panel"><div className="panel-title"><h2>Map history</h2><span className="subtle">{history.timeline.length} actions</span></div><div className="timeline-list" aria-label="Map history timeline">{!history.timeline.length && <div className="timeline-empty">No actions yet.</div>}{history.timeline.slice().reverse().map(event => <div className={`timeline-entry timeline-${event.kind}`} key={event.id}><time dateTime={event.timestamp} title={displayTimestamp(event.timestamp)}>{displayTimestamp(event.timestamp)}</time><span>{event.action}</span></div>)}</div></div>
       </aside>
+        </div>
+      </div>
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
-    {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" role="dialog" aria-modal="true" aria-label="Help" onKeyDown={event => { if (event.key === "Escape") setHelp(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button autoFocus className="btn" onClick={() => setHelp(false)}>Close</button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
-    {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1><p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
+    {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1>{assignmentReport && <div className={`export-status ${assignmentReport.passed ? "pass" : "fail"}`} role="status"><strong>{assignmentReport.passed ? "This map meets the assignment requirements." : "This map does not meet the assignment requirements."}</strong><ul>{assignmentReport.checks.map(check => <li key={check.id}>{check.ok ? "✓" : "✕"} {check.label} — {check.detail}</li>)}</ul>{!assignmentReport.passed && <p>You can still download or print; the plate is stamped NEEDS WORK.</p>}</div>}<p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
+    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min unique concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max unique concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min unique relations<input type="number" min="1" value={assignmentDraft.minUniqueRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, minUniqueRelations: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label>Time limit (minutes)<input type="number" min="1" value={assignmentDraft.timeLimitMinutes} onChange={event => setAssignmentDraft({ ...assignmentDraft, timeLimitMinutes: event.target.value })} placeholder="30" /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
   </div>;
 }
 

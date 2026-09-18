@@ -113,7 +113,7 @@ test("structure evidence updates as manually assembled branches connect", async 
   expect((await storedMap(page)).meta.added_by.drawn).toBe(3);
 });
 
-test("rejects duplicate vocabulary and switches Help audiences without changing the map", async ({ page }) => {
+test("rejects duplicate vocabulary without changing the map", async ({ page }) => {
   await createConcept(page, "Mind");
   await createConcept(page, "mind");
   await createRelation(page, "explains");
@@ -121,16 +121,6 @@ test("rejects duplicate vocabulary and switches Help audiences without changing 
   expect(await storedConcepts(page)).toHaveLength(1);
   expect(await storedRelations(page)).toHaveLength(1);
   const before = await storedMap(page);
-
-  await page.getByRole("button", { name: "Help", exact: true }).click();
-  const help = page.locator(".modal");
-  await expect(help.locator("pre")).toContainText("Build a map from scratch");
-  await help.getByRole("button", { name: "For instructors" }).click();
-  await expect(help.locator("pre")).toContainText("Running an assignment");
-  await help.getByRole("button", { name: "For students" }).click();
-  await expect(help.locator("pre")).toContainText("Build a map from scratch");
-  await page.locator(".overlay").click({ position: { x: 5, y: 5 } });
-  await expect(help).toHaveCount(0);
   expect((await storedMap(page)).propositions).toEqual(before.propositions);
   expect((await storedMap(page)).meta.edit_count).toBe(before.meta.edit_count);
 });

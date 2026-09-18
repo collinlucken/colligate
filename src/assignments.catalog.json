@@ -1,0 +1,28 @@
+[
+  {
+    "code": "DEMO",
+    "title": "Practice assignment",
+    "focus_question": "What are you trying to understand?",
+    "requirements": {
+      "minConcepts": 4,
+      "minPropositions": 3,
+      "minUniqueRelations": 2,
+      "minDegree": 1,
+      "requireConnected": true
+    }
+  },
+  {
+    "code": "MIND1",
+    "title": "Mind and body",
+    "focus_question": "How is the mind related to the body?",
+    "requirements": {
+      "minConcepts": 6,
+      "minPropositions": 5,
+      "minUniqueRelations": 3,
+      "minDegree": 1,
+      "requireConnected": true,
+      "requiredConcepts": ["mind", "body"],
+      "timeLimitMinutes": 30
+    }
+  }
+]
