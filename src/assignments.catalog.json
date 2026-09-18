@@ -6,6 +6,7 @@
     "requirements": {
       "minConcepts": 4,
       "minPropositions": 3,
+      "minUniqueRelations": 2,
       "minDegree": 1,
       "requireConnected": true
     }
@@ -17,6 +18,7 @@
     "requirements": {
       "minConcepts": 6,
       "minPropositions": 5,
+      "minUniqueRelations": 3,
       "minDegree": 1,
       "requireConnected": true,
       "requiredConcepts": ["mind", "body"]

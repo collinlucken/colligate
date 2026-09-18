@@ -2,6 +2,7 @@ export type AssignmentRequirements = {
   minConcepts?: number;
   maxConcepts?: number;
   minPropositions?: number;
+  minUniqueRelations?: number;
   minDegree?: number;
   requireConnected?: boolean;
   requiredConcepts?: string[];
@@ -65,6 +66,7 @@ export function normalizeAssignment(raw: any): Assignment | null {
       minConcepts: positiveInt(requirements.minConcepts),
       maxConcepts: positiveInt(requirements.maxConcepts),
       minPropositions: positiveInt(requirements.minPropositions),
+      minUniqueRelations: positiveInt(requirements.minUniqueRelations),
       minDegree: positiveInt(requirements.minDegree),
       requireConnected: Boolean(requirements.requireConnected),
       requiredConcepts: requiredConcepts.length ? requiredConcepts : undefined,
@@ -86,6 +88,22 @@ function relationName(proposition: { relation?: any; as_written?: { relation?: s
   const relation = proposition.relation;
   if (typeof relation === "object" && relation) return String(relation.free || relation.label || "");
   return String(proposition.as_written?.relation || relation || "");
+}
+
+function uniqueLabels(labels: string[]): { count: number; duplicates: string[] } {
+  const first = new Map<string, string>();
+  const duplicates = new Set<string>();
+  for (const label of labels) {
+    const key = normLabel(label);
+    if (!key) continue;
+    if (first.has(key)) duplicates.add(first.get(key)!);
+    else first.set(key, label.trim());
+  }
+  return { count: first.size, duplicates: [...duplicates] };
+}
+
+function countDetail(unique: number, total: number, unit: string): string {
+  return unique === total ? `have ${unique}` : `have ${unique} unique (${total} ${unit})`;
 }
 
 function graphOf(map: { concepts: { id: string; label: string }[]; propositions: { subject: string; object: string }[] }) {
@@ -132,22 +150,24 @@ export function evaluateAssignment(
   const graph = graphOf(map);
   const conceptCount = map.concepts.length;
   const propositionCount = map.propositions.length;
+  const uniqueConcepts = uniqueLabels(map.concepts.map(concept => concept.label));
+  const uniqueRelations = uniqueLabels(map.propositions.map(proposition => relationName(proposition)));
   const checks: RequirementCheck[] = [];
 
   if (requirements.minConcepts) {
     checks.push({
       id: "minConcepts",
-      label: `At least ${requirements.minConcepts} concepts`,
-      ok: conceptCount >= requirements.minConcepts,
-      detail: `have ${conceptCount}`,
+      label: `At least ${requirements.minConcepts} unique concepts`,
+      ok: uniqueConcepts.count >= requirements.minConcepts,
+      detail: countDetail(uniqueConcepts.count, conceptCount, "nodes"),
     });
   }
   if (requirements.maxConcepts) {
     checks.push({
       id: "maxConcepts",
-      label: `At most ${requirements.maxConcepts} concepts`,
-      ok: conceptCount <= requirements.maxConcepts,
-      detail: `have ${conceptCount}`,
+      label: `At most ${requirements.maxConcepts} unique concepts`,
+      ok: uniqueConcepts.count <= requirements.maxConcepts,
+      detail: countDetail(uniqueConcepts.count, conceptCount, "nodes"),
     });
   }
   if (requirements.minPropositions) {
@@ -156,6 +176,14 @@ export function evaluateAssignment(
       label: `At least ${requirements.minPropositions} connections`,
       ok: propositionCount >= requirements.minPropositions,
       detail: `have ${propositionCount}`,
+    });
+  }
+  if (requirements.minUniqueRelations) {
+    checks.push({
+      id: "minUniqueRelations",
+      label: `At least ${requirements.minUniqueRelations} unique relations`,
+      ok: uniqueRelations.count >= requirements.minUniqueRelations,
+      detail: countDetail(uniqueRelations.count, propositionCount, "connections"),
     });
   }
   if (requirements.minDegree) {
@@ -210,6 +238,7 @@ export function encodeTicket(assignment: Assignment): string {
   if (r.minConcepts) parts.push(`c${r.minConcepts}`);
   if (r.maxConcepts) parts.push(`x${r.maxConcepts}`);
   if (r.minPropositions) parts.push(`p${r.minPropositions}`);
+  if (r.minUniqueRelations) parts.push(`u${r.minUniqueRelations}`);
   if (r.minDegree) parts.push(`d${r.minDegree}`);
   if (r.requireConnected) parts.push("n");
   if (r.requiredConcepts?.length) parts.push(`m:${r.requiredConcepts.join(",")}`);
@@ -231,6 +260,7 @@ export function decodeTicket(raw: string): Assignment | null {
     else if (/^c\d+$/i.test(token)) requirements.minConcepts = Number(token.slice(1));
     else if (/^x\d+$/i.test(token)) requirements.maxConcepts = Number(token.slice(1));
     else if (/^p\d+$/i.test(token)) requirements.minPropositions = Number(token.slice(1));
+    else if (/^u\d+$/i.test(token)) requirements.minUniqueRelations = Number(token.slice(1));
     else if (/^d\d+$/i.test(token)) requirements.minDegree = Number(token.slice(1));
     else if (/^m:/i.test(token)) requirements.requiredConcepts = stringList(token.slice(2));
     else if (/^r:/i.test(token)) requirements.requiredRelations = stringList(token.slice(2));

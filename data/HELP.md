@@ -91,7 +91,7 @@ working map is assembled in the canvas.
 1. Create the assignment with **Create assignment**, or add it to the published catalog
    (`src/assignments.catalog.json`) with a short chalkboard code such as `MIND1`.
 2. Write the code on the board. Students enter it; COLLIGATE sets the focus question and
-   shows the live checklist (concept count, connections per concept, required labels, and
+   shows the live checklist (unique concepts, unique relations, connection count, required labels, and
    whether the map is connected).
 3. Students build the map themselves and export SVG or print PDF. A map that meets the
    requirements is stamped MEETS REQUIREMENTS. One that does not is stamped NEEDS WORK

@@ -94,6 +94,61 @@ test("minDegree fails isolated or under-connected concepts", () => {
   assert.match(degree?.detail || "", /Soul/);
 });
 
+test("duplicate concept labels do not satisfy a unique-concept minimum", () => {
+  const assignment = normalizeAssignment({
+    code: "DUP",
+    focus_question: "Q",
+    requirements: { minConcepts: 4 },
+  })!;
+  const report = evaluateAssignment(assignment, {
+    concepts: [
+      { id: "a", label: "Mind" },
+      { id: "b", label: "mind" },
+      { id: "c", label: "Body" },
+      { id: "d", label: "BODY" },
+    ],
+    propositions: [],
+  });
+  const check = report.checks.find(item => item.id === "minConcepts");
+  assert.equal(check?.ok, false);
+  assert.match(check?.detail || "", /2 unique/);
+});
+
+test("repeated relation words do not satisfy a unique-relation minimum", () => {
+  const assignment = normalizeAssignment({
+    code: "RELN",
+    focus_question: "Q",
+    requirements: { minPropositions: 3, minUniqueRelations: 3 },
+  })!;
+  const sameWord = evaluateAssignment(assignment, {
+    concepts: [
+      { id: "a", label: "Mind" },
+      { id: "b", label: "Body" },
+      { id: "c", label: "World" },
+    ],
+    propositions: [
+      { subject: "a", object: "b", relation: { free: "is related to" } },
+      { subject: "b", object: "c", relation: { free: "Is Related To" } },
+      { subject: "c", object: "a", relation: { free: "is related to" } },
+    ],
+  });
+  assert.equal(sameWord.checks.find(item => item.id === "minPropositions")?.ok, true);
+  assert.equal(sameWord.checks.find(item => item.id === "minUniqueRelations")?.ok, false);
+  const varied = evaluateAssignment(assignment, {
+    concepts: [
+      { id: "a", label: "Mind" },
+      { id: "b", label: "Body" },
+      { id: "c", label: "World" },
+    ],
+    propositions: [
+      { subject: "a", object: "b", relation: { free: "depends on" } },
+      { subject: "b", object: "c", relation: { free: "produces" } },
+      { subject: "c", object: "a", relation: { free: "is part of" } },
+    ],
+  });
+  assert.equal(varied.passed, true);
+});
+
 test("required relations look at used arrow labels", () => {
   const assignment = normalizeAssignment({
     code: "REL",
@@ -121,6 +176,12 @@ test("tickets round-trip through the chalkboard encoding", () => {
   assert.deepEqual(decoded?.requirements.minConcepts, 6);
   assert.deepEqual(decoded?.requirements.requiredConcepts, ["mind", "body"]);
   assert.equal(decoded?.requirements.requireConnected, true);
+  const withUnique = encodeTicket({
+    ...mind1,
+    requirements: { ...mind1.requirements, minUniqueRelations: 3 },
+  });
+  assert.match(withUnique, /\|u3(?:\||$)/);
+  assert.equal(decodeTicket(withUnique)?.requirements.minUniqueRelations, 3);
 });
 
 test("lookup accepts catalog codes, tickets, and JSON", () => {

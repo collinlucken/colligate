@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import barlowFontUrl from "./assets/BarlowCondensed-Regular.ttf?url";
-import helpText from "../data/HELP.md?raw";
 import { diagnoseStructure } from "./engine";
 import { clipLineToRectangles, SVG_NODE_RECT_SIZE, SVG_VIEWBOX, scaleSizeToViewBox, type Size } from "./geometry";
 import {
@@ -203,6 +202,7 @@ type AssignmentDraft = {
   minConcepts: string;
   maxConcepts: string;
   minPropositions: string;
+  minUniqueRelations: string;
   minDegree: string;
   requireConnected: boolean;
   requiredConcepts: string;
@@ -217,6 +217,7 @@ function emptyAssignmentDraft(): AssignmentDraft {
     minConcepts: "",
     maxConcepts: "",
     minPropositions: "",
+    minUniqueRelations: "",
     minDegree: "",
     requireConnected: false,
     requiredConcepts: "",
@@ -233,6 +234,7 @@ function draftToAssignment(draft: AssignmentDraft): Assignment | null {
       minConcepts: draft.minConcepts,
       maxConcepts: draft.maxConcepts,
       minPropositions: draft.minPropositions,
+      minUniqueRelations: draft.minUniqueRelations,
       minDegree: draft.minDegree,
       requireConnected: draft.requireConnected,
       requiredConcepts: draft.requiredConcepts,
@@ -419,7 +421,6 @@ function App() {
   const [conceptLabelInput, setConceptLabelInput] = useState("");
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
-  const [help, setHelp] = useState(false);
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
@@ -429,13 +430,13 @@ function App() {
   const [exportSheet, setExportSheet] = useState<null | { mode: "svg" | "print"; svg: string; fileUrl: string; printUrl: string }>(null);
   const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
   useEffect(() => {
-    if (!help && !inspectorOpen) return;
+    if (!inspectorOpen) return;
     const previous = document.activeElement as HTMLElement | null;
-    const panel = document.querySelector(help ? ".modal" : ".proposition-pane");
+    const panel = document.querySelector(".proposition-pane");
     const controls = () => Array.from(panel?.querySelectorAll<HTMLElement>('button:not(:disabled), input, [tabindex="0"]') || []);
     controls()[0]?.focus();
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setHelp(false); setInspectorOpen(false); }
+      if (event.key === "Escape") setInspectorOpen(false);
       if (event.key !== "Tab") return;
       const items = controls();
       const first = items[0], last = items[items.length - 1];
@@ -444,8 +445,7 @@ function App() {
     };
     document.addEventListener("keydown", handleKey);
     return () => { document.removeEventListener("keydown", handleKey); previous?.focus(); };
-  }, [help, inspectorOpen]);
-  const [helpTab, setHelpTab] = useState("students");
+  }, [inspectorOpen]);
   const [showWork, setShowWork] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedEdge, setSelectedEdge] = useState<string | null>(null);
@@ -984,13 +984,6 @@ function App() {
   const panelWork = (id: string, derivation: any) => showWork[id]
     ? <div className="derivation">{Array.isArray(derivation) ? derivation.join("\n") : String(derivation || "Counted directly from the propositions you added.")}</div>
     : null;
-  const helpSection = (section: "students" | "instructors") => {
-    const heading = section === "students" ? "## For students" : "## For instructors";
-    const other = section === "students" ? "## For instructors" : "## For students";
-    const start = helpText.indexOf(heading);
-    const end = helpText.indexOf(other, start + heading.length);
-    return helpText.slice(start + heading.length, end < 0 ? undefined : end).trim();
-  };
 
   return <div className={`shell textured ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
     <header className="topbar">
@@ -1004,7 +997,6 @@ function App() {
         <button className="btn primary" onClick={save}>Save map</button>
         <button className="btn ghost" onClick={exportSvg}>Export SVG</button>
         <button className="btn" onClick={printMap}>Print / PDF</button>
-        <button className="btn ghost" onClick={() => setHelp(true)}>Help</button>
         <a className="btn ghost" href="/">Collin Lucken</a>
       </div>
     </header>
@@ -1190,9 +1182,8 @@ function App() {
       </aside>
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
-    {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" role="dialog" aria-modal="true" aria-label="Help" onKeyDown={event => { if (event.key === "Escape") setHelp(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button autoFocus className="btn" onClick={() => setHelp(false)}>Close</button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
     {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1>{assignmentReport && <div className={`export-status ${assignmentReport.passed ? "pass" : "fail"}`} role="status"><strong>{assignmentReport.passed ? "This map meets the assignment requirements." : "This map does not meet the assignment requirements."}</strong><ul>{assignmentReport.checks.map(check => <li key={check.id}>{check.ok ? "✓" : "✕"} {check.label} — {check.detail}</li>)}</ul>{!assignmentReport.passed && <p>You can still download or print; the plate is stamped NEEDS WORK.</p>}</div>}<p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
-    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
+    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min unique concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max unique concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min unique relations<input type="number" min="1" value={assignmentDraft.minUniqueRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, minUniqueRelations: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
   </div>;
 }
 
