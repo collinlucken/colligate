@@ -21,7 +21,8 @@
       "minUniqueRelations": 3,
       "minDegree": 1,
       "requireConnected": true,
-      "requiredConcepts": ["mind", "body"]
+      "requiredConcepts": ["mind", "body"],
+      "timeLimitMinutes": 30
     }
   }
 ]

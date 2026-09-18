@@ -63,7 +63,8 @@ judge whether a proposition is true; that judgment belongs to you.
 ### Assignment codes
 
 If your instructor writes a code on the board, enter it in **Assignment code**. That
-loads the guiding question and the requirements for the map. Export and print then
+loads the guiding question and the requirements for the map. If the assignment has a
+time limit, the timer starts when you press **Enter**. Export and print then
 tell you whether the map meets those requirements. A map that does not yet meet them
 can still be downloaded; it is stamped NEEDS WORK.
 
@@ -90,9 +91,10 @@ working map is assembled in the canvas.
 
 1. Create the assignment with **Create assignment**, or add it to the published catalog
    (`src/assignments.catalog.json`) with a short chalkboard code such as `MIND1`.
-2. Write the code on the board. Students enter it; COLLIGATE sets the focus question and
-   shows the live checklist (unique concepts, unique relations, connection count, required labels, and
-   whether the map is connected).
+2. Write the code on the board. Students enter it; COLLIGATE sets the focus question,
+   starts the timer, and shows the live checklist (unique concepts, unique relations,
+   connection count, time limit, required labels, and whether the map is connected).
+   Re-entering the same code in the same browser resumes the original start time.
 3. Students build the map themselves and export SVG or print PDF. A map that meets the
    requirements is stamped MEETS REQUIREMENTS. One that does not is stamped NEEDS WORK
    and lists the failed rules. Content and truth-value are still yours to grade.

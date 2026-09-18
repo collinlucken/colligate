@@ -192,3 +192,20 @@ test("lookup accepts catalog codes, tickets, and JSON", () => {
   assert.equal(fromJson?.requirements.minPropositions, 5);
   assert.equal(lookupAssignment("NOPE", catalog), null);
 });
+
+test("a 30 minute limit passes inside the window and fails after", () => {
+  const assignment = normalizeAssignment({
+    code: "T30",
+    focus_question: "Q",
+    requirements: { timeLimitMinutes: 30 },
+  })!;
+  const startedAt = 1_000_000;
+  const inside = evaluateAssignment(assignment, emptyMap, { startedAt, now: startedAt + 29 * 60_000 });
+  assert.equal(inside.checks.find(check => check.id === "timeLimit")?.ok, true);
+  const over = evaluateAssignment(assignment, emptyMap, { startedAt, now: startedAt + 31 * 60_000 });
+  assert.equal(over.checks.find(check => check.id === "timeLimit")?.ok, false);
+  assert.match(over.checks.find(check => check.id === "timeLimit")?.detail || "", /1:00 over/);
+  const ticket = encodeTicket(assignment);
+  assert.match(ticket, /\|t30(?:\||$)/);
+  assert.equal(decodeTicket(ticket)?.requirements.timeLimitMinutes, 30);
+});

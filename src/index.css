@@ -26,6 +26,11 @@ a.btn{text-decoration:none;color:inherit}
 .assignment-card.fail{border-color:var(--vermillion)}
 .assignment-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .assignment-head strong{display:block;font-size:18px;letter-spacing:.04em;margin-top:2px}
+.assignment-timer{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:.08em;line-height:1}
+.assignment-timer span{display:block;font-size:28px}
+.assignment-timer small{display:block;margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.assignment-timer.expired{color:var(--vermillion)}
+.assignment-timer.expired small{color:var(--vermillion)}
 .assignment-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .assignment-mark{font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid currentColor}
 .assignment-mark.pass{color:#2C5A3C}

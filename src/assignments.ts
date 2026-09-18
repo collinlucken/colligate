@@ -7,6 +7,7 @@ export type AssignmentRequirements = {
   requireConnected?: boolean;
   requiredConcepts?: string[];
   requiredRelations?: string[];
+  timeLimitMinutes?: number;
 };
 
 export type Assignment = {
@@ -71,6 +72,7 @@ export function normalizeAssignment(raw: any): Assignment | null {
       requireConnected: Boolean(requirements.requireConnected),
       requiredConcepts: requiredConcepts.length ? requiredConcepts : undefined,
       requiredRelations: requiredRelations.length ? requiredRelations : undefined,
+      timeLimitMinutes: positiveInt(requirements.timeLimitMinutes),
     },
   };
 }
@@ -104,6 +106,15 @@ function uniqueLabels(labels: string[]): { count: number; duplicates: string[] }
 
 function countDetail(unique: number, total: number, unit: string): string {
   return unique === total ? `have ${unique}` : `have ${unique} unique (${total} ${unit})`;
+}
+
+export function formatClock(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
 function graphOf(map: { concepts: { id: string; label: string }[]; propositions: { subject: string; object: string }[] }) {
@@ -145,6 +156,7 @@ export function evaluateAssignment(
     concepts: { id: string; label: string }[];
     propositions: { subject: string; object: string; relation?: any; as_written?: { relation?: string } }[];
   },
+  clock?: { startedAt?: number; now?: number },
 ): AssignmentReport {
   const { requirements } = assignment;
   const graph = graphOf(map);
@@ -226,6 +238,19 @@ export function evaluateAssignment(
       detail: missing.length ? `missing ${missing.join(", ")}` : "all present",
     });
   }
+  if (requirements.timeLimitMinutes) {
+    const now = clock?.now ?? Date.now();
+    const startedAt = clock?.startedAt ?? now;
+    const elapsed = Math.max(0, now - startedAt);
+    const limit = requirements.timeLimitMinutes * 60_000;
+    const within = elapsed <= limit;
+    checks.push({
+      id: "timeLimit",
+      label: `Finished within ${requirements.timeLimitMinutes} min`,
+      ok: within,
+      detail: within ? `${formatClock(limit - elapsed)} remaining` : `${formatClock(elapsed - limit)} over`,
+    });
+  }
 
   return { assignment, passed: checks.every(check => check.ok), checks };
 }
@@ -240,6 +265,7 @@ export function encodeTicket(assignment: Assignment): string {
   if (r.minPropositions) parts.push(`p${r.minPropositions}`);
   if (r.minUniqueRelations) parts.push(`u${r.minUniqueRelations}`);
   if (r.minDegree) parts.push(`d${r.minDegree}`);
+  if (r.timeLimitMinutes) parts.push(`t${r.timeLimitMinutes}`);
   if (r.requireConnected) parts.push("n");
   if (r.requiredConcepts?.length) parts.push(`m:${r.requiredConcepts.join(",")}`);
   if (r.requiredRelations?.length) parts.push(`r:${r.requiredRelations.join(",")}`);
@@ -262,6 +288,7 @@ export function decodeTicket(raw: string): Assignment | null {
     else if (/^p\d+$/i.test(token)) requirements.minPropositions = Number(token.slice(1));
     else if (/^u\d+$/i.test(token)) requirements.minUniqueRelations = Number(token.slice(1));
     else if (/^d\d+$/i.test(token)) requirements.minDegree = Number(token.slice(1));
+    else if (/^t\d+$/i.test(token)) requirements.timeLimitMinutes = Number(token.slice(1));
     else if (/^m:/i.test(token)) requirements.requiredConcepts = stringList(token.slice(2));
     else if (/^r:/i.test(token)) requirements.requiredRelations = stringList(token.slice(2));
   }

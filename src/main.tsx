@@ -21,9 +21,11 @@ import {
   encodeTicket,
   evaluateAssignment,
   failedSummary,
+  formatClock,
   lookupAssignment,
   mergeCatalog,
   normalizeAssignment,
+  normalizeCode,
   type Assignment,
 } from "./assignments";
 import "./index.css";
@@ -52,6 +54,7 @@ const MANUAL_RELATION_BANK_STORAGE = "weft-manual-relation-bank";
 const MANUAL_HISTORY_STORAGE = "weft-manual-history";
 const LOCAL_ASSIGNMENTS_STORAGE = "weft-assignment-catalog";
 const ACTIVE_ASSIGNMENT_STORAGE = "weft-assignment-code";
+const ASSIGNMENT_STARTS_STORAGE = "weft-assignment-starts";
 const LEGACY_MAP_STORAGE = "weft-map";
 
 const emptyManualPack = {
@@ -195,6 +198,28 @@ function saveLocalAssignment(assignment: Assignment) {
   localStorage.setItem(LOCAL_ASSIGNMENTS_STORAGE, JSON.stringify(next));
 }
 
+function readAssignmentStarts(): Record<string, number> {
+  try {
+    const stored = localStorage.getItem(ASSIGNMENT_STARTS_STORAGE);
+    if (!stored) return {};
+    const value = JSON.parse(stored);
+    if (!value || typeof value !== "object") return {};
+    return Object.fromEntries(Object.entries(value).filter(([, started]) => Number.isFinite(Number(started))).map(([code, started]) => [code, Number(started)]));
+  } catch {
+    return {};
+  }
+}
+
+function startAssignmentClock(code: string, now = Date.now()): number {
+  const key = normalizeCode(code);
+  const starts = readAssignmentStarts();
+  if (!starts[key]) {
+    starts[key] = now;
+    localStorage.setItem(ASSIGNMENT_STARTS_STORAGE, JSON.stringify(starts));
+  }
+  return starts[key];
+}
+
 type AssignmentDraft = {
   code: string;
   title: string;
@@ -204,6 +229,7 @@ type AssignmentDraft = {
   minPropositions: string;
   minUniqueRelations: string;
   minDegree: string;
+  timeLimitMinutes: string;
   requireConnected: boolean;
   requiredConcepts: string;
   requiredRelations: string;
@@ -219,6 +245,7 @@ function emptyAssignmentDraft(): AssignmentDraft {
     minPropositions: "",
     minUniqueRelations: "",
     minDegree: "",
+    timeLimitMinutes: "",
     requireConnected: false,
     requiredConcepts: "",
     requiredRelations: "",
@@ -236,6 +263,7 @@ function draftToAssignment(draft: AssignmentDraft): Assignment | null {
       minPropositions: draft.minPropositions,
       minUniqueRelations: draft.minUniqueRelations,
       minDegree: draft.minDegree,
+      timeLimitMinutes: draft.timeLimitMinutes,
       requireConnected: draft.requireConnected,
       requiredConcepts: draft.requiredConcepts,
       requiredRelations: draft.requiredRelations,
@@ -422,6 +450,8 @@ function App() {
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [assignmentStartedAt, setAssignmentStartedAt] = useState<number | null>(null);
+  const [now, setNow] = useState(Date.now());
   const [codeInput, setCodeInput] = useState("");
   const [codeError, setCodeError] = useState("");
   const [composerOpen, setComposerOpen] = useState(false);
@@ -549,12 +579,21 @@ function App() {
 
   const structure: any = useMemo(() => diagnoseStructure(map, manualPack as any), [map, manualPack]);
   const assignmentReport = useMemo(
-    () => assignment ? evaluateAssignment(assignment, map) : null,
-    [assignment, map],
+    () => assignment ? evaluateAssignment(assignment, map, { startedAt: assignmentStartedAt ?? undefined, now }) : null,
+    [assignment, map, assignmentStartedAt, now],
   );
 
+  useEffect(() => {
+    if (!assignment) return;
+    const tick = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(tick);
+  }, [assignment]);
+
   const applyAssignment = (next: Assignment) => {
+    const startedAt = startAssignmentClock(next.code);
     setAssignment(next);
+    setAssignmentStartedAt(startedAt);
+    setNow(Date.now());
     setCodeInput(next.code);
     setCodeError("");
     localStorage.setItem(ACTIVE_ASSIGNMENT_STORAGE, next.code);
@@ -572,6 +611,7 @@ function App() {
 
   const leaveAssignment = () => {
     setAssignment(null);
+    setAssignmentStartedAt(null);
     setCodeInput("");
     setCodeError("");
     localStorage.removeItem(ACTIVE_ASSIGNMENT_STORAGE);
@@ -984,6 +1024,13 @@ function App() {
   const panelWork = (id: string, derivation: any) => showWork[id]
     ? <div className="derivation">{Array.isArray(derivation) ? derivation.join("\n") : String(derivation || "Counted directly from the propositions you added.")}</div>
     : null;
+  const elapsedMs = assignmentStartedAt ? Math.max(0, now - assignmentStartedAt) : 0;
+  const limitMs = (assignment?.requirements.timeLimitMinutes || 0) * 60_000;
+  const timeExpired = !!limitMs && elapsedMs > limitMs;
+  const timerFace = !assignmentStartedAt ? "" : limitMs
+    ? timeExpired ? formatClock(elapsedMs - limitMs) : formatClock(limitMs - elapsedMs)
+    : formatClock(elapsedMs);
+  const timerCaption = !limitMs ? "elapsed" : timeExpired ? "over time" : "remaining";
 
   return <div className={`shell textured ${inspectorOpen ? "inspector-open" : ""}`} onClick={() => picker && setPicker(null)}>
     <header className="topbar">
@@ -1008,6 +1055,7 @@ function App() {
               <div className="eyebrow">Assignment {assignment.code}</div>
               <strong>{assignment.title || assignment.focus_question}</strong>
             </div>
+            {timerFace && <div className={`assignment-timer ${timeExpired ? "expired" : ""}`} role="timer" aria-live="polite"><span>{timerFace}</span><small>{timerCaption}{limitMs ? ` · ${assignment.requirements.timeLimitMinutes} min` : ""}</small></div>}
             <div className="assignment-actions">
               <span className={`assignment-mark ${assignmentReport.passed ? "pass" : "fail"}`}>{assignmentReport.passed ? "Meets requirements" : "Does not meet requirements"}</span>
               <button className="btn ghost" onClick={() => { setAssignmentDraft(emptyAssignmentDraft()); setTicketCopied(""); setComposerOpen(true); }}>Create assignment</button>
@@ -1183,7 +1231,7 @@ function App() {
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
     {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1>{assignmentReport && <div className={`export-status ${assignmentReport.passed ? "pass" : "fail"}`} role="status"><strong>{assignmentReport.passed ? "This map meets the assignment requirements." : "This map does not meet the assignment requirements."}</strong><ul>{assignmentReport.checks.map(check => <li key={check.id}>{check.ok ? "✓" : "✕"} {check.label} — {check.detail}</li>)}</ul>{!assignmentReport.passed && <p>You can still download or print; the plate is stamped NEEDS WORK.</p>}</div>}<p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
-    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min unique concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max unique concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min unique relations<input type="number" min="1" value={assignmentDraft.minUniqueRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, minUniqueRelations: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
+    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min unique concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max unique concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min unique relations<input type="number" min="1" value={assignmentDraft.minUniqueRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, minUniqueRelations: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label>Time limit (minutes)<input type="number" min="1" value={assignmentDraft.timeLimitMinutes} onChange={event => setAssignmentDraft({ ...assignmentDraft, timeLimitMinutes: event.target.value })} placeholder="30" /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
   </div>;
 }
 
