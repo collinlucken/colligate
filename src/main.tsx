@@ -17,6 +17,16 @@ import {
   type HistoryState,
 } from "./history";
 import { deleteSelection } from "./deletion";
+import catalog from "./assignments.catalog.json";
+import {
+  encodeTicket,
+  evaluateAssignment,
+  failedSummary,
+  lookupAssignment,
+  mergeCatalog,
+  normalizeAssignment,
+  type Assignment,
+} from "./assignments";
 import "./index.css";
 
 type AnyMap = any;
@@ -41,6 +51,8 @@ const MANUAL_MAP_STORAGE = "weft-manual-map";
 const MANUAL_CONCEPT_BANK_STORAGE = "weft-manual-concept-bank";
 const MANUAL_RELATION_BANK_STORAGE = "weft-manual-relation-bank";
 const MANUAL_HISTORY_STORAGE = "weft-manual-history";
+const LOCAL_ASSIGNMENTS_STORAGE = "weft-assignment-catalog";
+const ACTIVE_ASSIGNMENT_STORAGE = "weft-assignment-code";
 const LEGACY_MAP_STORAGE = "weft-map";
 
 const emptyManualPack = {
@@ -158,6 +170,75 @@ function readStoredHistory(): HistoryState {
   } catch {
     return createHistoryState();
   }
+}
+
+function bundledAssignments(): Assignment[] {
+  return mergeCatalog((catalog as Assignment[]) || [], []);
+}
+
+function readLocalAssignments(): Assignment[] {
+  try {
+    const stored = localStorage.getItem(LOCAL_ASSIGNMENTS_STORAGE);
+    if (!stored) return [];
+    const value = JSON.parse(stored);
+    return Array.isArray(value) ? mergeCatalog([], value) : [];
+  } catch {
+    return [];
+  }
+}
+
+function allAssignments(): Assignment[] {
+  return mergeCatalog(bundledAssignments(), readLocalAssignments());
+}
+
+function saveLocalAssignment(assignment: Assignment) {
+  const next = mergeCatalog(readLocalAssignments(), [assignment]);
+  localStorage.setItem(LOCAL_ASSIGNMENTS_STORAGE, JSON.stringify(next));
+}
+
+type AssignmentDraft = {
+  code: string;
+  title: string;
+  focus_question: string;
+  minConcepts: string;
+  maxConcepts: string;
+  minPropositions: string;
+  minDegree: string;
+  requireConnected: boolean;
+  requiredConcepts: string;
+  requiredRelations: string;
+};
+
+function emptyAssignmentDraft(): AssignmentDraft {
+  return {
+    code: "",
+    title: "",
+    focus_question: "",
+    minConcepts: "",
+    maxConcepts: "",
+    minPropositions: "",
+    minDegree: "",
+    requireConnected: false,
+    requiredConcepts: "",
+    requiredRelations: "",
+  };
+}
+
+function draftToAssignment(draft: AssignmentDraft): Assignment | null {
+  return normalizeAssignment({
+    code: draft.code,
+    title: draft.title,
+    focus_question: draft.focus_question,
+    requirements: {
+      minConcepts: draft.minConcepts,
+      maxConcepts: draft.maxConcepts,
+      minPropositions: draft.minPropositions,
+      minDegree: draft.minDegree,
+      requireConnected: draft.requireConnected,
+      requiredConcepts: draft.requiredConcepts,
+      requiredRelations: draft.requiredRelations,
+    },
+  });
 }
 
 function slug(value: string): string {
@@ -339,6 +420,12 @@ function App() {
   const [relationLabelInput, setRelationLabelInput] = useState("");
   const [query, setQuery] = useState("");
   const [help, setHelp] = useState(false);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [composerOpen, setComposerOpen] = useState(false);
+  const [assignmentDraft, setAssignmentDraft] = useState(emptyAssignmentDraft);
+  const [ticketCopied, setTicketCopied] = useState("");
   const [exportSheet, setExportSheet] = useState<null | { mode: "svg" | "print"; svg: string; fileUrl: string; printUrl: string }>(null);
   const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
   useEffect(() => {
@@ -461,6 +548,52 @@ function App() {
   }, []);
 
   const structure: any = useMemo(() => diagnoseStructure(map, manualPack as any), [map, manualPack]);
+  const assignmentReport = useMemo(
+    () => assignment ? evaluateAssignment(assignment, map) : null,
+    [assignment, map],
+  );
+
+  const applyAssignment = (next: Assignment) => {
+    setAssignment(next);
+    setCodeInput(next.code);
+    setCodeError("");
+    localStorage.setItem(ACTIVE_ASSIGNMENT_STORAGE, next.code);
+    const current = editableRef.current;
+    if ((current.map.focus_question || "") !== next.focus_question) {
+      const nextMap = { ...current.map, focus_question: next.focus_question };
+      editableRef.current = { ...current, map: nextMap };
+      mapRef.current = nextMap;
+      setMap(nextMap);
+    }
+    focusEditingRef.current = false;
+    focusDraftRef.current = next.focus_question;
+    setFocusDraft(next.focus_question);
+  };
+
+  const leaveAssignment = () => {
+    setAssignment(null);
+    setCodeInput("");
+    setCodeError("");
+    localStorage.removeItem(ACTIVE_ASSIGNMENT_STORAGE);
+  };
+
+  const submitAssignmentCode = (event?: React.FormEvent) => {
+    event?.preventDefault();
+    const found = lookupAssignment(codeInput, allAssignments());
+    if (!found) {
+      setCodeError("No assignment for that code.");
+      return;
+    }
+    applyAssignment(found);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("code") || params.get("a") || localStorage.getItem(ACTIVE_ASSIGNMENT_STORAGE) || "";
+    if (!requested) return;
+    const found = lookupAssignment(requested, allAssignments());
+    if (found) applyAssignment(found);
+  }, []);
   const bank = useMemo(
     () => conceptBank.filter(concept => concept.label.toLowerCase().includes(query.toLowerCase())).slice(0, 24),
     [conceptBank, query],
@@ -714,7 +847,14 @@ function App() {
       return `<g transform="translate(${point.x - 70} ${point.y - 22})"><rect width="140" height="44" fill="#EDE4D2" stroke="#201C18" stroke-width="1"/><text x="70" y="27" text-anchor="middle" font-size="15" fill="#201C18">${label}</text></g>`;
     }).join("");
     const marks = [[10,10],[830,10],[10,680],[830,680]].map(([x,y]) => `<g transform="translate(${x} ${y}) scale(.5)" fill="#C4441C"><path fill-rule="evenodd" d="M0 0h40v40H0z M3 3v34h34V3z M8 8h24v7H15v10h17v7H8z M19 18h16v4H19z"/></g>`).join("");
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="#5A5148">COLLIGATE · CONCEPT MAPS · ${xmlEsc(new Date().toLocaleDateString())}</text>${marks}</svg>`;
+    const statusFill = assignmentReport && !assignmentReport.passed ? "#C4441C" : assignmentReport?.passed ? "#2C5A3C" : "#5A5148";
+    const rawStatus = assignmentReport
+      ? assignmentReport.passed
+        ? `COLLIGATE · ${assignmentReport.assignment.code.toUpperCase()} · MEETS REQUIREMENTS · ${new Date().toLocaleDateString()}`
+        : `COLLIGATE · ${assignmentReport.assignment.code.toUpperCase()} · NEEDS WORK · ${failedSummary(assignmentReport)}`
+      : `COLLIGATE · CONCEPT MAPS · ${new Date().toLocaleDateString()}`;
+    const status = xmlEsc(rawStatus.length > 160 ? `${rawStatus.slice(0, 157)}...` : rawStatus);
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 710" width="1200" height="990"><style>${fontStyle}</style><rect width="860" height="710" fill="#EDE4D2"/><rect x="11" y="11" width="838" height="688" fill="none" stroke="#C4441C" stroke-width="3"/><rect x="17" y="17" width="826" height="676" fill="none" stroke="#C4441C" stroke-width="1"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#201C18"/></marker></defs><g transform="translate(30 30)">${edges}${nodes}</g><path d="M40 642H820" stroke="#C4441C"/><text x="430" y="663" text-anchor="middle" font-size="14" fill="#201C18">${xmlEsc(map.title.toUpperCase())}</text><text x="430" y="683" text-anchor="middle" font-size="9" fill="${statusFill}">${status}</text>${marks}</svg>`;
   };
 
   const openExportSheet = (mode: "svg" | "print", svg: string) => {
@@ -736,7 +876,7 @@ function App() {
     setExportError("");
     try {
       const svg = await buildPlateSvg();
-      download("colligate-map.svg", svg, "image/svg+xml");
+      if (!assignmentReport || assignmentReport.passed) download("colligate-map.svg", svg, "image/svg+xml");
       openExportSheet("svg", svg);
     } catch {
       setExportError("SVG export could not be built. Try again.");
@@ -747,8 +887,10 @@ function App() {
     setExportError("");
     try {
       const svg = await buildPlateSvg();
-      printMarkup(printHtmlDocument(svg));
-      try { window.print(); } catch { /* preview frames often block this */ }
+      if (!assignmentReport || assignmentReport.passed) {
+        printMarkup(printHtmlDocument(svg));
+        try { window.print(); } catch { /* preview frames often block this */ }
+      }
       openExportSheet("print", svg);
     } catch {
       setExportError("The printable map could not be built. Try again.");
@@ -855,7 +997,7 @@ function App() {
       <div className="app-mark"><Monogram /></div>
       <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
       <div className="edition">Concepts <small>&amp;</small> relations</div>
-      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
+      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} readOnly={!!assignment} title={assignment ? `Set by assignment ${assignment.code}` : undefined} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
       <div className="toolbar">
         <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action">Undo</button>
         <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
@@ -866,6 +1008,39 @@ function App() {
         <a className="btn ghost" href="/">Collin Lucken</a>
       </div>
     </header>
+    <div className="assignment-bar">
+      {assignment && assignmentReport ? (
+        <div className={`assignment-card ${assignmentReport.passed ? "pass" : "fail"}`}>
+          <div className="assignment-head">
+            <div>
+              <div className="eyebrow">Assignment {assignment.code}</div>
+              <strong>{assignment.title || assignment.focus_question}</strong>
+            </div>
+            <div className="assignment-actions">
+              <span className={`assignment-mark ${assignmentReport.passed ? "pass" : "fail"}`}>{assignmentReport.passed ? "Meets requirements" : "Does not meet requirements"}</span>
+              <button className="btn ghost" onClick={() => { setAssignmentDraft(emptyAssignmentDraft()); setTicketCopied(""); setComposerOpen(true); }}>Create assignment</button>
+              <button className="btn ghost" onClick={leaveAssignment}>Leave</button>
+            </div>
+          </div>
+          <ol className="requirement-list">
+            {assignmentReport.checks.map(check => (
+              <li key={check.id} className={check.ok ? "ok" : "miss"}>
+                <span aria-hidden="true">{check.ok ? "✓" : "✕"}</span>
+                <span>{check.label} <em>{check.detail}</em></span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ) : (
+        <form className="assignment-entry" aria-label="Assignment code" onSubmit={submitAssignmentCode}>
+          <label htmlFor="assignment-code">Assignment code</label>
+          <input id="assignment-code" value={codeInput} onChange={event => { setCodeInput(event.target.value); setCodeError(""); }} placeholder="Code from the board" autoComplete="off" />
+          <button className="btn primary" type="submit">Enter</button>
+          <button className="btn ghost" type="button" onClick={() => { setAssignmentDraft(emptyAssignmentDraft()); setTicketCopied(""); setComposerOpen(true); }}>Create assignment</button>
+          {codeError && <p className="assignment-error" role="alert">{codeError}</p>}
+        </form>
+      )}
+    </div>
     {exportError && <div className="storage-notice" role="alert">{exportError} <button className="btn" onClick={exportSvg}>Retry export</button></div>}
     <main className="workspace">
       <section className="pane proposition-pane">
@@ -1016,7 +1191,8 @@ function App() {
     </main>
     <footer className="footer">COLLIGATE · CONCEPT MAPS · Saved locally</footer>
     {help && <div className="overlay" onClick={() => setHelp(false)}><div className="modal" role="dialog" aria-modal="true" aria-label="Help" onKeyDown={event => { if (event.key === "Escape") setHelp(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / field notes</div><button autoFocus className="btn" onClick={() => setHelp(false)}>Close</button></div><h1>Help</h1><div className="modal-tabs"><button className={helpTab === "students" ? "active" : ""} onClick={() => setHelpTab("students")}>For students</button><button className={helpTab === "instructors" ? "active" : ""} onClick={() => setHelpTab("instructors")}>For instructors</button></div><pre>{helpSection(helpTab === "students" ? "students" : "instructors")}</pre></div></div>}
-    {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1><p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
+    {exportSheet && <div className="overlay" onClick={closeExportSheet}><div className="modal export-sheet" role="dialog" aria-modal="true" aria-label={exportSheet.mode === "print" ? "Print map" : "Export SVG"} onKeyDown={event => { if (event.key === "Escape") closeExportSheet(); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">{exportSheet.mode === "print" ? "COLLIGATE / print" : "COLLIGATE / export"}</div><button autoFocus className="btn" onClick={closeExportSheet}>Close</button></div><h1>{exportSheet.mode === "print" ? "Print / PDF" : "Export SVG"}</h1>{assignmentReport && <div className={`export-status ${assignmentReport.passed ? "pass" : "fail"}`} role="status"><strong>{assignmentReport.passed ? "This map meets the assignment requirements." : "This map does not meet the assignment requirements."}</strong><ul>{assignmentReport.checks.map(check => <li key={check.id}>{check.ok ? "✓" : "✕"} {check.label} — {check.detail}</li>)}</ul>{!assignmentReport.passed && <p>You can still download or print; the plate is stamped NEEDS WORK.</p>}</div>}<p>{exportSheet.mode === "print" ? "If a print dialog does not appear, download the SVG or open the printable plate and choose Save as PDF." : "If the file did not download, use the button below."}</p><div className="export-actions"><a className="btn primary" href={exportSheet.fileUrl} download="colligate-map.svg">Download SVG</a><a className="btn" href={exportSheet.printUrl} target="_blank" rel="noopener">Open printable plate</a><button className="btn" onClick={() => { printMarkup(printHtmlDocument(exportSheet.svg)); try { window.print(); } catch { /* ignore */ } }}>Print</button></div><img className="plate" src={exportSheet.fileUrl} alt="Printable concept map" /></div></div>}
+    {composerOpen && <div className="overlay" onClick={() => setComposerOpen(false)}><div className="modal assignment-composer" role="dialog" aria-modal="true" aria-label="Create assignment" onKeyDown={event => { if (event.key === "Escape") setComposerOpen(false); }} onClick={event => event.stopPropagation()}><Corners /><div style={{ display: "flex", justifyContent: "space-between" }}><div className="eyebrow">COLLIGATE / assignment</div><button autoFocus className="btn" onClick={() => setComposerOpen(false)}>Close</button></div><h1>Create assignment</h1><p>Write a short code on the board. Students enter it here. Published codes live in the assignment catalog; this form also saves to this browser and can copy a share ticket.</p><div className="composer-grid"><label>Code<input value={assignmentDraft.code} onChange={event => setAssignmentDraft({ ...assignmentDraft, code: event.target.value })} placeholder="MIND1" /></label><label>Title<input value={assignmentDraft.title} onChange={event => setAssignmentDraft({ ...assignmentDraft, title: event.target.value })} placeholder="Mind and body" /></label><label className="wide">Guiding question<input value={assignmentDraft.focus_question} onChange={event => setAssignmentDraft({ ...assignmentDraft, focus_question: event.target.value })} placeholder="How is the mind related to the body?" /></label><label>Min concepts<input type="number" min="1" value={assignmentDraft.minConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, minConcepts: event.target.value })} /></label><label>Max concepts<input type="number" min="1" value={assignmentDraft.maxConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, maxConcepts: event.target.value })} /></label><label>Min connections<input type="number" min="1" value={assignmentDraft.minPropositions} onChange={event => setAssignmentDraft({ ...assignmentDraft, minPropositions: event.target.value })} /></label><label>Min connections / concept<input type="number" min="1" value={assignmentDraft.minDegree} onChange={event => setAssignmentDraft({ ...assignmentDraft, minDegree: event.target.value })} /></label><label className="wide">Must-use concepts<input value={assignmentDraft.requiredConcepts} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredConcepts: event.target.value })} placeholder="mind, body" /></label><label className="wide">Must-use relations<input value={assignmentDraft.requiredRelations} onChange={event => setAssignmentDraft({ ...assignmentDraft, requiredRelations: event.target.value })} placeholder="is part of, causes" /></label><label className="check"><input type="checkbox" checked={assignmentDraft.requireConnected} onChange={event => setAssignmentDraft({ ...assignmentDraft, requireConnected: event.target.checked })} /> Every concept must be connected</label></div><div className="export-actions"><button className="btn primary" onClick={() => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } saveLocalAssignment(next); applyAssignment(next); setComposerOpen(false); }}>Use this assignment</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const ticket = encodeTicket(next); try { await navigator.clipboard.writeText(ticket); setTicketCopied("Share ticket copied."); } catch { setTicketCopied(ticket); } }}>Copy share ticket</button><button className="btn" onClick={async () => { const next = draftToAssignment(assignmentDraft); if (!next) { setTicketCopied("Need a code and a guiding question."); return; } const json = JSON.stringify(next, null, 2); try { await navigator.clipboard.writeText(json); setTicketCopied("JSON copied for the assignment catalog."); } catch { setTicketCopied(json); } }}>Copy JSON</button></div>{ticketCopied && <p className="composer-note">{ticketCopied}</p>}{draftToAssignment(assignmentDraft) && <pre className="composer-ticket">{encodeTicket(draftToAssignment(assignmentDraft)!)}</pre>}</div></div>}
   </div>;
 }
 
