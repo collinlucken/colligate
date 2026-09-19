@@ -24,5 +24,18 @@
       "requiredConcepts": ["mind", "body"],
       "timeLimitMinutes": 30
     }
+  },
+  {
+    "code": "CM1",
+    "title": "Can machines think?",
+    "focus_question": "Can machines think?",
+    "requirements": {
+      "minConcepts": 10,
+      "minPropositions": 10,
+      "minUniqueRelations": 10,
+      "minDegree": 1,
+      "requireConnected": true,
+      "timeLimitMinutes": 30
+    }
   }
 ]

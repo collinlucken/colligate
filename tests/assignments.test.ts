@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import {
   decodeTicket,
   encodeTicket,
@@ -208,4 +209,18 @@ test("a 30 minute limit passes inside the window and fails after", () => {
   const ticket = encodeTicket(assignment);
   assert.match(ticket, /\|t30(?:\||$)/);
   assert.equal(decodeTicket(ticket)?.requirements.timeLimitMinutes, 30);
+});
+
+test("CM1 is published in the catalog", () => {
+  const published = JSON.parse(readFileSync(new URL("../src/assignments.catalog.json", import.meta.url), "utf8"))
+    .map((raw: unknown) => normalizeAssignment(raw))
+    .filter(Boolean);
+  const cm1 = lookupAssignment("CM1", published);
+  assert.equal(cm1?.focus_question, "Can machines think?");
+  assert.equal(cm1?.requirements.minConcepts, 10);
+  assert.equal(cm1?.requirements.minPropositions, 10);
+  assert.equal(cm1?.requirements.minUniqueRelations, 10);
+  assert.equal(cm1?.requirements.minDegree, 1);
+  assert.equal(cm1?.requirements.requireConnected, true);
+  assert.equal(cm1?.requirements.timeLimitMinutes, 30);
 });
