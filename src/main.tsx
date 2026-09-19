@@ -48,6 +48,7 @@ type ManualRelation = {
 };
 
 const MANUAL_PACK_ID = "manual-user-authorship";
+const DEFAULT_MAP_TITLE = "Untitled map";
 const MANUAL_MAP_STORAGE = "weft-manual-map";
 const MANUAL_CONCEPT_BANK_STORAGE = "weft-manual-concept-bank";
 const MANUAL_RELATION_BANK_STORAGE = "weft-manual-relation-bank";
@@ -68,7 +69,7 @@ const emptyManualPack = {
 function createInitialMap(now = new Date().toISOString()): AnyMap {
   return {
     id: "map-new",
-    title: "Untitled map",
+    title: DEFAULT_MAP_TITLE,
     focus_question: "What are you trying to understand?",
     genre: "concept",
     pack_id: MANUAL_PACK_ID,
@@ -118,7 +119,7 @@ function normalizeMap(raw: any): AnyMap {
   return {
     ...raw,
     id: raw?.id || `map-${Date.now()}`,
-    title: raw?.title || "Untitled map",
+    title: raw?.title || DEFAULT_MAP_TITLE,
     focus_question: raw?.focus_question || "",
     genre: "concept",
     pack_id: raw?.pack_id || MANUAL_PACK_ID,
@@ -459,6 +460,7 @@ function App() {
   const [ticketCopied, setTicketCopied] = useState("");
   const [exportSheet, setExportSheet] = useState<null | { mode: "svg" | "print"; svg: string; fileUrl: string; printUrl: string }>(null);
   const [focusDraft, setFocusDraft] = useState(restored.map.focus_question || "");
+  const [titleDraft, setTitleDraft] = useState(restored.map.title === DEFAULT_MAP_TITLE ? "" : (restored.map.title || ""));
   useEffect(() => {
     if (!inspectorOpen) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -489,6 +491,9 @@ function App() {
   const focusEditingRef = useRef(false);
   const focusBeforeRef = useRef("");
   const focusDraftRef = useRef(restored.map.focus_question || "");
+  const titleEditingRef = useRef(false);
+  const titleBeforeRef = useRef("");
+  const titleDraftRef = useRef(restored.map.title === DEFAULT_MAP_TITLE ? "" : (restored.map.title || ""));
   const svgRef = useRef<SVGSVGElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -554,6 +559,11 @@ function App() {
     if (!focusEditingRef.current) {
       focusDraftRef.current = current.map.focus_question || "";
       setFocusDraft(focusDraftRef.current);
+    }
+    if (!titleEditingRef.current) {
+      const storedTitle = current.map.title || DEFAULT_MAP_TITLE;
+      titleDraftRef.current = storedTitle === DEFAULT_MAP_TITLE ? "" : storedTitle;
+      setTitleDraft(titleDraftRef.current);
     }
     if ((current.map.meta?.edit_count || 0) !== previousEditCount.current) {
       previousEditCount.current = current.map.meta?.edit_count || 0;
@@ -992,6 +1002,35 @@ function App() {
     }
     setDrag(null);
   };
+  const updateTitleDraft = (title: string) => {
+    if (!titleEditingRef.current) {
+      titleBeforeRef.current = editableRef.current.map.title || DEFAULT_MAP_TITLE;
+      titleEditingRef.current = true;
+    }
+    titleDraftRef.current = title;
+    setTitleDraft(title);
+  };
+  const commitTitle = () => {
+    if (!titleEditingRef.current) return;
+    titleEditingRef.current = false;
+    const current = editableRef.current;
+    const previousTitle = titleBeforeRef.current;
+    const nextTitle = titleDraftRef.current.trim() || DEFAULT_MAP_TITLE;
+    if (nextTitle === previousTitle) return;
+    const previous: EditableState = {
+      ...current,
+      map: { ...current.map, title: previousTitle },
+    };
+    const next: EditableState = {
+      ...current,
+      map: {
+        ...current.map,
+        title: nextTitle,
+        meta: { ...current.map.meta, edit_count: (current.map.meta?.edit_count || 0) + 1 },
+      },
+    };
+    commitSnapshotEdit("Changed the map title", previous, next);
+  };
   const updateFocusDraft = (focus_question: string) => {
     if (!focusEditingRef.current) {
       focusBeforeRef.current = editableRef.current.map.focus_question || "";
@@ -1037,7 +1076,10 @@ function App() {
       <div className="app-mark"><Monogram /></div>
       <div className="brand"><small>CONCEPT MAPS</small>COLLIGATE</div>
       <div className="edition">Concepts <small>&amp;</small> relations</div>
-      <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} readOnly={!!assignment} title={assignment ? `Set by assignment ${assignment.code}` : undefined} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
+      <div className="identity">
+        <div className="focus"><label htmlFor="map-title">Map title</label><input id="map-title" value={titleDraft} placeholder="Your name or map title" autoComplete="off" onChange={event => updateTitleDraft(event.target.value)} onBlur={commitTitle} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
+        <div className="focus"><label htmlFor="focus-question">Focus question</label><input id="focus-question" value={focusDraft} readOnly={!!assignment} title={assignment ? `Set by assignment ${assignment.code}` : undefined} onChange={event => updateFocusDraft(event.target.value)} onBlur={commitFocus} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.currentTarget.blur(); } }} /></div>
+      </div>
       <div className="toolbar">
         <button className="btn ghost" onClick={undo} disabled={!history.past.length} aria-label="Undo last action" title="Undo last action">Undo</button>
         <button className="btn ghost" onClick={redo} disabled={!history.future.length} aria-label="Redo last action" title="Redo last action">Redo</button>
